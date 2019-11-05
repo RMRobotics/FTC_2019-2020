@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.disnodeteam.dogecv.detectors.roverrukus.*;
-import com.disnodeteam.dogecv.detectors.roverrukus.Direction;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 /**
@@ -11,8 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 @Autonomous(name = "AutoCrater", group = "auto")
 public class AutoCrater extends armisticeAutoSuper{
 
-    private GoldAlignDetector detector;
-    protected org.firstinspires.ftc.teamcode.armisticeAuto.Direction Direction;
 
     public void runOpMode(){
 

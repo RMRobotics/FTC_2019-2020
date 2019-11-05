@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.disnodeteam.dogecv.detectors.roverrukus.*;
-import com.disnodeteam.dogecv.detectors.roverrukus.Direction;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -12,9 +11,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "AutoDepot", group = "auto")
 public class AutoDepot extends armisticeAutoSuper{
 // NOTE: MECHANICS WILL ADD AN ARM TO DEPOSIT TEAM MARKER, NAVIGATING TO THE DEPOT WILL NOT BE NECESSARY
-    private GoldAlignDetector detector;
-    private com.disnodeteam.dogecv.detectors.roverrukus.Direction position = Direction.UNKNOWN;
-
     public void runOpMode(){
 
         //initialization
@@ -38,8 +34,7 @@ public class AutoDepot extends armisticeAutoSuper{
 
 
                                                             //See Qube
-        detector = new GoldAlignDetector();
-        DogeCVYellowDetector(detector);
+
 
                                                             //Vars
         int count = 0;
@@ -55,18 +50,6 @@ public class AutoDepot extends armisticeAutoSuper{
 //            //push mineral w/ arm
 //        }
 //        else
-        if (detector.getAligned().equals(Direction.LEFT)){
-            setStrafe(0.4);
-            while(detector.isFound()==false){
-            }
-            setDrive(0);
-        }
-        else if (detector.getAligned().equals(Direction.RIGHT)){
-            setStrafe(-0.4);
-            while(detector.isFound()==false){
-            }
-            setDrive(0);
-        }
 //        else
 //        {
 //            moveEncoders(2 * -1);
