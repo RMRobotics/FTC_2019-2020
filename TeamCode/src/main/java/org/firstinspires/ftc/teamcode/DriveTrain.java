@@ -5,10 +5,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class DriveTrain {
 
+    //Motors
     private DcMotor FL;
     private DcMotor FR;
     private DcMotor BL;
     private DcMotor BR;
+
+    //Sensors
     private DcMotor odometryY;
     private DcMotor odometryLeft;
     private DcMotor odometryRight;
@@ -26,7 +29,7 @@ public class DriveTrain {
 
     }
 
-   // public void moveTo(Position pos){
+    //public void moveTo(Position pos){
 
     //}
 
@@ -40,7 +43,7 @@ public class DriveTrain {
         odometryY.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
-
+    
 
 
 }
