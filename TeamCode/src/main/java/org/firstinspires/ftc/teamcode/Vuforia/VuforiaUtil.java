@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.vuforia;
+package org.firstinspires.ftc.teamcode.Vuforia;
 
 /*
 Created on 10/24/19 by Neal Machado

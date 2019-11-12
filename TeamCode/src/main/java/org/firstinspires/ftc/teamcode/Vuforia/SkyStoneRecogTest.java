@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.vuforia;
+package org.firstinspires.ftc.teamcode.Vuforia;
 
 /*
 Created on 10/15/19 by Neal Machado
@@ -26,10 +26,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.R;
 
-import org.firstinspires.ftc.teamcode.Vuforia.VuforiaUtil;
 
 @Autonomous(name = "Skystone Test", group = "Vuforia")
-public class skystone_recognition_test extends LinearOpMode {
+public class SkyStoneRecogTest extends LinearOpMode {
 
     private static final float mmPerInch = 25.4f;
     private static final float robotSize = 18 * mmPerInch;
