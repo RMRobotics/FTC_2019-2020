@@ -238,8 +238,12 @@ public class SkyStoneRecogTest extends LinearOpMode {
 //                                rZ = 0;
 //                        }
                             if(i.getName().equals("Stone Target")){
+                                tY = VuforiaUtil.round(location.get(0) / mmPerInch, 2);
+                                tX = VuforiaUtil.round(location.get(1) / mmPerInch, 2);
+                                rZ = VuforiaUtil.round(VuforiaUtil.to180(-1 * rot.secondAngle + 180), 2);
                                 telemetry.addData("\nImage: ", i.getName());
                                 telemetry.addData("\n(Translation to Target) X: " + tX + ", Y: " + tY + ", Z: " + tZ, "");
+                                telemetry.addData("\nZ-Rotation: ", rZ);
                             }
                             else{
                                 telemetry.addData("\nImage: ", i.getName());
