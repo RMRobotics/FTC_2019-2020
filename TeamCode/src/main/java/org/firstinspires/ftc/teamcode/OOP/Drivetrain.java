@@ -5,6 +5,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Drivetrain {
 
+    //Constants
+    public static final float MM_PER_INCH = 25.4f;
+    public static final float ROBOT_SIZE = 18 * MM_PER_INCH;
+    public static final float FTC_FIELD_SIZE_MM = (12 * 12 - 2) * MM_PER_INCH;
+    public static final float CPI = 0;
+
     //Motors
     private DcMotor FL;
     private DcMotor FR;
