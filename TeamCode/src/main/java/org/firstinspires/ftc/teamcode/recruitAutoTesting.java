@@ -13,13 +13,12 @@ public abstract class recruitAutoTesting extends LinearOpMode {
     DcMotor BL;
     DcMotor BR;
 
-    public void initialize(lift) {
+    public void initialize() {
         DcMotor Lift;
 
     }
 
 
-    @Override
 
     public void initialize (Boolean i) {
         FL = hardwareMap.dcMotor.get("FL");

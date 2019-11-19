@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.OOP;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class DriveTrain {
+public class Drivetrain {
 
     //Motors
     private DcMotor FL;
@@ -16,8 +16,11 @@ public class DriveTrain {
     private DcMotor odometryLeft;
     private DcMotor odometryRight;
 
+    //Map and Positioning
+    private OdometryMap map;
+    private Pose robotPosition;
 
-    public DriveTrain(HardwareMap hardwareMap){
+    public Drivetrain(HardwareMap hardwareMap){
         FL = hardwareMap.dcMotor.get("FL");
         FR = hardwareMap.dcMotor.get("FR");
         BL = hardwareMap.dcMotor.get("BL");
@@ -41,8 +44,9 @@ public class DriveTrain {
         odometryLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         odometryRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         odometryY.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
     }
+
+    //Manual Movement Functions
 
 
 

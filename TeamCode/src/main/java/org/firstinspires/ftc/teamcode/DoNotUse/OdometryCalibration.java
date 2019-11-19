@@ -28,7 +28,7 @@ public class OdometryCalibration extends LinearOpMode {
     //IMU Sensor
     BNO055IMU imu;
 
-    //Hardware Map Names for drive motors and odometry wheels. THIS WILL CHANGE ON EACH ROBOT, YOU NEED TO UPDATE THESE VALUES ACCORDINGLY
+    //Hardware OdometryMap Names for drive motors and odometry wheels. THIS WILL CHANGE ON EACH ROBOT, YOU NEED TO UPDATE THESE VALUES ACCORDINGLY
     String rfName = "rf", rbName = "rb", lfName = "lf", lbName = "lb";
     String verticalLeftEncoderName = rbName, verticalRightEncoderName = lfName, horizontalEncoderName = rfName;
 
@@ -172,7 +172,7 @@ public class OdometryCalibration extends LinearOpMode {
         right_back.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-        telemetry.addData("Status", "Hardware Map Init Complete");
+        telemetry.addData("Status", "Hardware OdometryMap Init Complete");
         telemetry.update();
 
     }
