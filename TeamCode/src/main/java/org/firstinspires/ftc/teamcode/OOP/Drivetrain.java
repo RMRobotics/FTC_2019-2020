@@ -6,11 +6,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Drivetrain {
 
-    //Constants
-    protected static final float MM_PER_INCH = 25.4f;
-    protected static final float ROBOT_SIZE = 18 * MM_PER_INCH;
-    protected static final float FTC_FIELD_SIZE_MM = (12 * 12 - 2) * MM_PER_INCH;
-    protected static final float CPI = 0;
+    //Constants - TODO - Verify these values
+    protected final float MM_PER_INCH = 25.4f;
+    protected final float ROBOT_SIZE = 18 * MM_PER_INCH;
+    protected final float FTC_FIELD_SIZE_MM = (12 * 12 - 2) * MM_PER_INCH;
+    protected final float CPI = 0;
 
     //Motors
     protected DcMotor FL;
@@ -19,7 +19,7 @@ public class Drivetrain {
     protected DcMotor BR;
 
     //Sensors
-    protected DcMotor odometryY;
+    protected DcMotor odometryX;
     protected DcMotor odometryLeft;
     protected DcMotor odometryRight;
 
@@ -37,7 +37,7 @@ public class Drivetrain {
         BR = hardwareMap.dcMotor.get("BR");
         odometryLeft = hardwareMap.dcMotor.get("odometryLeft");
         odometryRight = hardwareMap.dcMotor.get("odometryRight");
-        odometryY = hardwareMap.dcMotor.get("odometryY");
+        odometryX = hardwareMap.dcMotor.get("odometryX");
         setupMotors();
         timer = new ElapsedTime();
     }
@@ -53,7 +53,7 @@ public class Drivetrain {
         BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         odometryLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         odometryRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        odometryY.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        odometryX.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     //Manual Movement Functions
@@ -71,4 +71,20 @@ public class Drivetrain {
         while (timer.seconds()<num){}
     }
 
+
+    public DcMotor getOdometryLeft() {
+        return odometryLeft;
+    }
+
+    public DcMotor getOdometryRight() {
+        return odometryRight;
+    }
+
+    public DcMotor getOdometryX() {
+        return odometryX;
+    }
+
+    public float getCPI() {
+        return CPI;
+    }
 }
