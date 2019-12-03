@@ -51,12 +51,15 @@ public class AutoDrivetrain extends Drivetrain {
 
         boolean halfMaxVelocityReached = false;
         boolean reachedMaxAcceleration = false;
+        boolean reachedHalfTicks = false;
 
-        double reachedMaxAccelerationTicks = 0;
+        double ticksAtMaxAcceleration = 0;
 
         double dTicks = 1;
 
         double previousTicks = 0;
+
+        double halfVelocityTicks = 0;
 
 
         setOdometryMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -65,8 +68,11 @@ public class AutoDrivetrain extends Drivetrain {
         while(! halfMaxVelocityReached){
             ticks = odometryRight.getCurrentPosition();
 
-            if((ticks - previousTicks) > dTicks){
+            if((ticks - previousTicks) > 1){
                 dTicks = ticks - previousTicks;
+            }
+            else{
+                dTicks = 1;
             }
 
             previousTicks = ticks;
@@ -77,7 +83,7 @@ public class AutoDrivetrain extends Drivetrain {
             }
             else{
                 if(! reachedMaxAcceleration) {
-                    reachedMaxAccelerationTicks = ticks;
+                    ticksAtMaxAcceleration = ticks;
                     reachedMaxAcceleration = true;
                 }
             }
@@ -91,7 +97,45 @@ public class AutoDrivetrain extends Drivetrain {
             }
         }
 
-        
+        halfVelocityTicks = ticks;
+
+
+        while(! reachedHalfTicks){
+            ticks = odometryRight.getCurrentPosition();
+
+            if((ticks - previousTicks) > 1){
+                dTicks = ticks - previousTicks;
+            }
+            else{
+                dTicks = 1;
+            }
+
+            previousTicks = ticks;
+
+
+
+            if(reachedMaxAcceleration){
+                if(odometryRight.getCurrentPosition() >= halfVelocityTicks + ticksAtMaxAcceleration){
+                    reachedMaxAcceleration = false;
+                }
+            }
+            else{
+                
+            }
+
+
+
+
+
+
+
+
+
+
+            if(ticks >= halfTickDistance){
+                reachedHalfTicks = true;
+            }
+        }
 
     }
 
