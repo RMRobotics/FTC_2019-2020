@@ -49,9 +49,10 @@ public class AutoDrivetrain extends Drivetrain {
         double velocity = 0;
         double ticks = 0;
 
-        boolean halfMaxVelocityReached = false;
+        boolean reachedHalfMaxVelocity = false;
         boolean reachedMaxAcceleration = false;
         boolean reachedHalfTicks = false;
+        boolean reachedMaxVelocity = false;
 
         double ticksAtMaxAcceleration = 0;
 
@@ -65,7 +66,7 @@ public class AutoDrivetrain extends Drivetrain {
         setOdometryMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //get to half velocity
-        while(! halfMaxVelocityReached){
+        while(! reachedHalfMaxVelocity && ! reachedHalfTicks){
             ticks = odometryRight.getCurrentPosition();
 
             if((ticks - previousTicks) > 1){
@@ -93,13 +94,17 @@ public class AutoDrivetrain extends Drivetrain {
             setDrive(velocity);
 
             if(velocity >= halfMaxVelocity){
-                halfMaxVelocityReached = true;
+                reachedHalfMaxVelocity = true;
+            }
+            if(ticks >= halfTickDistance){
+                reachedHalfTicks = true;
             }
         }
 
+        ticksAtMaxAcceleration = ticks - ticksAtMaxAcceleration;
         halfVelocityTicks = ticks;
 
-
+        //get to half the distance
         while(! reachedHalfTicks){
             ticks = odometryRight.getCurrentPosition();
 
@@ -112,16 +117,22 @@ public class AutoDrivetrain extends Drivetrain {
 
             previousTicks = ticks;
 
+            if(! reachedMaxVelocity){
+                if(reachedMaxAcceleration){
+                    if(odometryRight.getCurrentPosition() <= halfVelocityTicks + ticksAtMaxAcceleration){
+                        velocity += acceleration * dTicks;
+                        setDrive(velocity);
+                    }
+                    else{
+                        reachedMaxAcceleration = false;
+                    }
+                }
+                else{
 
-
-            if(reachedMaxAcceleration){
-                if(odometryRight.getCurrentPosition() >= halfVelocityTicks + ticksAtMaxAcceleration){
-                    reachedMaxAcceleration = false;
                 }
             }
-            else{
-                
-            }
+
+
 
 
 
