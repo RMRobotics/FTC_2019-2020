@@ -128,24 +128,13 @@ public class AutoDrivetrain extends Drivetrain {
                         setDrive(velocity);
                     }
                     else{
-                    reachedMaxAcceleration = false;
-                }
+                        reachedMaxAcceleration = false;
+                    }
                 }
                 else{
-                    acceleration
+                    acceleration -= maxJerk * dTicks;
                 }
             }
-
-
-
-
-
-
-
-
-
-
-
 
             if(ticks >= halfTickDistance){
                 reachedHalfTicks = true;
