@@ -10,13 +10,13 @@ public class Drivetrain {
     protected final float MM_PER_INCH = 25.4f;
     protected final float ROBOT_SIZE = 18 * MM_PER_INCH;
     protected final float FTC_FIELD_SIZE_MM = (12 * 12 - 2) * MM_PER_INCH;
-    protected final float CPI = 0;
+    protected final double CPI = 86.93063762;
 
     //Motors
-    protected DcMotor FL;
-    protected DcMotor FR;
-    protected DcMotor BL;
-    protected DcMotor BR;
+    public DcMotor FL;
+    public DcMotor FR;
+    public DcMotor BL;
+    public DcMotor BR;
 
     //Sensors
     protected DcMotor odometryX;
@@ -84,7 +84,7 @@ public class Drivetrain {
         return odometryX;
     }
 
-    public float getCPI() {
+    public double getCPI() {
         return CPI;
     }
 }

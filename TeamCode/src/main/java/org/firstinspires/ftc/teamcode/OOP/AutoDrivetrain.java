@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.DriveDirection;
 import org.firstinspires.ftc.teamcode.RevIMU;
 
@@ -17,6 +18,9 @@ public class AutoDrivetrain extends Drivetrain {
     protected RevIMU imu;
     private BNO055IMU rev;
     private ElapsedTime timer;
+    private final double HALF_SPEED = 0.5;
+    private final double FULL_SPEED = 1;
+    private Telemetry telemetry;
 
     //constructors
     public AutoDrivetrain(HardwareMap hardwareMap){
@@ -92,12 +96,21 @@ public class AutoDrivetrain extends Drivetrain {
         acceleratedMoveStraight(MAX_JERK, MAX_ACCELERATION, MAX_VELOCITY, moveDistance, direction);
     }
 
+    public void setTelemetry(Telemetry telemetry) {
+        this.telemetry = telemetry;
+    }
+
 
     protected void setDriveMode(DcMotor.RunMode r) {
         FL.setMode(r);
         FR.setMode(r);
         BL.setMode(r);
         BR.setMode(r);
+    }
+
+
+    public Telemetry getTelemetry() {
+        return telemetry;
     }
 
     protected void setZeroBehavior(DcMotor.ZeroPowerBehavior z) {
@@ -119,7 +132,110 @@ public class AutoDrivetrain extends Drivetrain {
         odometryX.setZeroPowerBehavior(z);
     }
 
+    /**
+     *  *Method borrowed from last year*
+     * @param distanceInches
+     */
+    public void moveDistance(double distanceInches, double power){
 
+        setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //Stop and reset encoder
+        int distanceTics = (int)(distanceInches * CPI);
+        int currentPos1 = FL.getCurrentPosition();
+        int currentPos2 = FR.getCurrentPosition();
+        int currentPos3 = BL.getCurrentPosition();
+        int currentPos4 = BR.getCurrentPosition();
+
+        setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
+        int targetPos1 = currentPos1+distanceTics;
+        int targetPos2 = currentPos2+distanceTics;
+        int targetPos3 = currentPos3+distanceTics;
+        int targetPos4 = currentPos4+distanceTics;
+
+        setTargetPosition(targetPos1,targetPos2,targetPos3,targetPos4);
+
+        setPowerAll(power,power,power,power);
+
+        // Loop while we approach the target.  Display position as we go
+        while(FR.isBusy() && FL.isBusy() && BL.isBusy() && BR.isBusy()) {
+            telemetry.addData("FL Encoder", FL.getCurrentPosition());
+            telemetry.addData("BL Encoder", BL.getCurrentPosition());
+            telemetry.addData("FR Encoder", FR.getCurrentPosition());
+            telemetry.addData("BR Encoder", BR.getCurrentPosition());
+            telemetry.update();
+        }
+
+        // We are done, turn motors off and switch back to normal driving mode.
+        FL.setPower(0);
+        FR.setPower(0);
+        BL.setPower(0);
+        BR.setPower(0);
+
+
+    }
+
+    /**
+     *
+     * @param degreesToTurn - Number of degrees to turn the robot.
+     * @param speed - Speed at which to rotate
+     */
+    public void turnDegrees(int degreesToTurn, double speed){
+        while(getZAngle() < degreesToTurn){
+            setPowerAll(speed, -speed, speed, -speed);
+            if(getZAngle() < degreesToTurn/4) {
+                setPowerAll(-speed/2, -speed/2, speed/2, speed/2);
+            }
+            telemetry.addData("IMU Angle", getZAngle());
+            telemetry.update();
+        }
+
+        //Stop the robot
+        setPowerAll(0, 0, 0, 0);
+        timer.reset();
+    }
+
+    /**
+     * A positive value for strafe, results in a strafe to the robot's right, negative for strafing left
+     * @param distanceInches
+     */
+    public void strafeDistance(double distanceInches, double power){
+
+        setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //Stop and reset encoder
+        int distanceTics = (int)(distanceInches * CPI);
+        int currentPos1 = FL.getCurrentPosition();
+        int currentPos2 = FR.getCurrentPosition();
+        int currentPos3 = BL.getCurrentPosition();
+        int currentPos4 = BR.getCurrentPosition();
+
+        setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
+        int targetPos1 = currentPos1+distanceTics;
+        int targetPos2 = currentPos2-distanceTics;
+        int targetPos3 = currentPos3-distanceTics;
+        int targetPos4 = currentPos4+distanceTics;
+
+        setTargetPosition(targetPos1,targetPos2,targetPos3,targetPos4);
+
+        setPowerAll(power,-power,-power,power);
+
+        // Loop while we approach the target.  Display position as we go
+        while(FR.isBusy() && FL.isBusy() && BL.isBusy() && BR.isBusy()) {
+            telemetry.addData("FL Encoder", FL.getCurrentPosition());
+            telemetry.addData("BL Encoder", BL.getCurrentPosition());
+            telemetry.addData("FR Encoder", FR.getCurrentPosition());
+            telemetry.addData("BR Encoder", BR.getCurrentPosition());
+            telemetry.update();
+        }
+
+        // We are done, turn motors off and switch back to normal driving mode.
+        FL.setPower(0);
+        FR.setPower(0);
+        BL.setPower(0);
+        BR.setPower(0);
+
+
+
+    }
 
     /**
      * Gets the orientation of the robot using the REV IMU
@@ -141,6 +257,14 @@ public class AutoDrivetrain extends Drivetrain {
         FR.setPower(fr);
         BL.setPower(bl);
         BR.setPower(br);
+    }
+
+    public void setTargetPosition(int fl, int fr, int bl, int br){
+        FL.setTargetPosition(fl);
+        FR.setTargetPosition(fr);
+        BL.setTargetPosition(bl);
+        BR.setTargetPosition(br);
+
     }
 
     public void setTimer(ElapsedTime timer) {
