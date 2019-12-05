@@ -53,43 +53,105 @@ public class AutoDrivetrain extends Drivetrain {
         double velocity = 0;
         double ticks = 0;
 
-        boolean halfMaxVelocityReached = false;
+        boolean reachedHalfMaxVelocity = false;
+        boolean reachedMaxAcceleration = false;
+        boolean reachedHalfTicks = false;
+        boolean reachedMaxVelocity = false;
 
-        double previousTicks = ticks;
-        double elapsedTicks = 0;
+        double ticksAtMaxAcceleration = 0;
 
-        while(! halfMaxVelocityReached){               //find a way to update ticks!!
-            elapsedTicks = ticks - previousTicks;
+        double dTicks = 1;
+
+        double previousTicks = 0;
+
+        double halfVelocityTicks = 0;
+
+
+        setOdometryMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //get to half velocity
+        while(! reachedHalfMaxVelocity && ! reachedHalfTicks){
+            ticks = odometryRight.getCurrentPosition();
+
+            if((ticks - previousTicks) > 1){
+                dTicks = ticks - previousTicks;
+            }
+            else{
+                dTicks = 1;
+            }
+
             previousTicks = ticks;
 
-            elapsedTicks = timer.seconds();
-            timer.reset();
 
-            if(acceleration <= maxAcceleration){
-                if(ticks <= quarterTickDistance){
-                    acceleration += elapsedTicks * maxJerk;
-                }
-                else{
-                    if(acceleration <= 0){
-                        acceleration = 0;
-                    }
-                    else{
-                        acceleration -= elapsedTicks * maxJerk;
-                    }
+            if(acceleration < maxAcceleration){
+                acceleration += maxJerk * dTicks;
+            }
+            else{
+                if(! reachedMaxAcceleration) {
+                    ticksAtMaxAcceleration = ticks;
+                    reachedMaxAcceleration = true;
                 }
             }
-            if(velocity <= maxVelocity){
-                if(ticks <= quarterTickDistance){
-                    velocity += elapsedTicks * acceleration;
-                }
-            }
+
+            velocity += acceleration * dTicks;
 
             setDrive(velocity);
 
             if(velocity >= halfMaxVelocity){
-                halfMaxVelocityReached = true;
+                reachedHalfMaxVelocity = true;
+            }
+            if(ticks >= halfTickDistance){
+                reachedHalfTicks = true;
             }
         }
+
+        ticksAtMaxAcceleration = ticks - ticksAtMaxAcceleration;
+        halfVelocityTicks = ticks;
+
+        //get to half the distance
+        while(! reachedHalfTicks){
+            ticks = odometryRight.getCurrentPosition();
+
+            if((ticks - previousTicks) > 1){
+                dTicks = ticks - previousTicks;
+            }
+            else{
+                dTicks = 1;
+            }
+
+            previousTicks = ticks;
+
+            if(! reachedMaxVelocity){
+                if(reachedMaxAcceleration){
+                    if(odometryRight.getCurrentPosition() <= halfVelocityTicks + ticksAtMaxAcceleration){
+                        velocity += acceleration * dTicks;
+                        setDrive(velocity);
+                    }
+                    else{
+                        reachedMaxAcceleration = false;
+                    }
+                }
+                else{
+
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+            if(ticks >= halfTickDistance){
+                reachedHalfTicks = true;
+            }
+        }
+
     }
 
     public void acceleratedMoveStraight(double moveDistance, DriveDirection direction){
