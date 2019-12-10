@@ -156,20 +156,9 @@ public class AutoDrivetrain extends Drivetrain {
                     }
                 }
                 else{
-
+                    acceleration -= maxJerk * dTicks;
                 }
             }
-
-
-
-
-
-
-
-
-
-
-
 
             if(ticks >= halfTickDistance){
                 reachedHalfTicks = true;
