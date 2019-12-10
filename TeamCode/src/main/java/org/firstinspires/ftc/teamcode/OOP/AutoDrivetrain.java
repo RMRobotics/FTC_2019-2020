@@ -132,7 +132,12 @@ public class AutoDrivetrain extends Drivetrain {
                     }
                 }
                 else{
-                    acceleration -= maxJerk * dTicks;
+                    if(acceleration >= 0){
+                        acceleration -= maxJerk * dTicks;
+                    }
+                    else{
+                        acceleration = 0;
+                    }
                 }
             }
 
