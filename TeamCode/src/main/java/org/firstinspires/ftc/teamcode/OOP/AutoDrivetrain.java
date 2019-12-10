@@ -2,10 +2,10 @@ package org.firstinspires.ftc.teamcode.OOP;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.DriveDirection;
 import org.firstinspires.ftc.teamcode.RevIMU;
 
@@ -20,25 +20,49 @@ public class AutoDrivetrain extends Drivetrain {
     private ElapsedTime timer;
     private final double HALF_SPEED = 0.5;
     private final double FULL_SPEED = 1;
-    private Telemetry telemetry;
+    private boolean odometryActive;
+
+    //Sensors
+    protected DcMotor odometryX;
+    protected DcMotor odometryLeft;
+    protected DcMotor odometryRight;
 
     //constructors
-    public AutoDrivetrain(HardwareMap hardwareMap){
-        super(hardwareMap);
-        setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        setOdometryMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setOdometryMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        setZeroBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        setOdometryZeroBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+    public AutoDrivetrain(HardwareMap hardwareMap, boolean odometryActive){
+        this.odometryActive = odometryActive;
+        setupMotors(hardwareMap);
         rev = hardwareMap.get(BNO055IMU.class, "imu");
         imu = new RevIMU(rev);
         timer = null;
 
     }
 
+    @Override
+    protected void setupMotors(HardwareMap hardwareMap) {
+        FL = hardwareMap.dcMotor.get("FL");
+        FR = hardwareMap.dcMotor.get("FR");
+        BL = hardwareMap.dcMotor.get("BL");
+        BR = hardwareMap.dcMotor.get("BR");
 
+        if(isOdometryActive()){
+            odometryLeft = hardwareMap.dcMotor.get("odometryLeft");
+            odometryRight = hardwareMap.dcMotor.get("odometryRight");
+            odometryX = hardwareMap.dcMotor.get("odometryX");
+            setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            setOdometryMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            setOdometryMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }else{
+            setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            setOdometryZeroBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }
+
+        FR.setDirection(DcMotorSimple.Direction.FORWARD);
+        BR.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
+        setZeroBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+    }
 
     //maxJerk in power / second^2, maxAcceleration in power / second, maxVelocity in power, moveDistance in inches
     public void acceleratedMoveStraight(double maxJerk, double maxAcceleration, double maxVelocity, double moveDistance, DriveDirection direction){
@@ -154,44 +178,30 @@ public class AutoDrivetrain extends Drivetrain {
 
     }
 
+    public boolean isOdometryActive() {
+        return odometryActive;
+    }
+
     public void acceleratedMoveStraight(double moveDistance, DriveDirection direction){
         acceleratedMoveStraight(MAX_JERK, MAX_ACCELERATION, MAX_VELOCITY, moveDistance, direction);
     }
 
-    public void setTelemetry(Telemetry telemetry) {
-        this.telemetry = telemetry;
-    }
-
-
-    protected void setDriveMode(DcMotor.RunMode r) {
-        FL.setMode(r);
-        FR.setMode(r);
-        BL.setMode(r);
-        BR.setMode(r);
-    }
-
-
-    public Telemetry getTelemetry() {
-        return telemetry;
-    }
-
-    protected void setZeroBehavior(DcMotor.ZeroPowerBehavior z) {
-        FL.setZeroPowerBehavior(z);
-        FR.setZeroPowerBehavior(z);
-        BL.setZeroPowerBehavior(z);
-        BR.setZeroPowerBehavior(z);
-    }
-
     protected void setOdometryMode(DcMotor.RunMode r){
-        odometryLeft.setMode(r);
-        odometryRight.setMode(r);
-        odometryX.setMode(r);
+        if(odometryActive){
+            odometryLeft.setMode(r);
+            odometryRight.setMode(r);
+            odometryX.setMode(r);
+        }
+
     }
 
     protected void setOdometryZeroBehavior(DcMotor.ZeroPowerBehavior z){
-        odometryLeft.setZeroPowerBehavior(z);
-        odometryRight.setZeroPowerBehavior(z);
-        odometryX.setZeroPowerBehavior(z);
+        if(odometryActive){
+            odometryLeft.setZeroPowerBehavior(z);
+            odometryRight.setZeroPowerBehavior(z);
+            odometryX.setZeroPowerBehavior(z);
+        }
+
     }
 
     /**
@@ -199,40 +209,42 @@ public class AutoDrivetrain extends Drivetrain {
      * @param distanceInches
      */
     public void moveDistance(double distanceInches, double power){
+        if(!odometryActive){
+            setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //Stop and reset encoder
+            int distanceTics = (int)(distanceInches * CPI);
+            int currentPos1 = FL.getCurrentPosition();
+            int currentPos2 = FR.getCurrentPosition();
+            int currentPos3 = BL.getCurrentPosition();
+            int currentPos4 = BR.getCurrentPosition();
 
-        setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //Stop and reset encoder
-        int distanceTics = (int)(distanceInches * CPI);
-        int currentPos1 = FL.getCurrentPosition();
-        int currentPos2 = FR.getCurrentPosition();
-        int currentPos3 = BL.getCurrentPosition();
-        int currentPos4 = BR.getCurrentPosition();
+            setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
+            int targetPos1 = currentPos1+distanceTics;
+            int targetPos2 = currentPos2+distanceTics;
+            int targetPos3 = currentPos3+distanceTics;
+            int targetPos4 = currentPos4+distanceTics;
 
-        setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
-        int targetPos1 = currentPos1+distanceTics;
-        int targetPos2 = currentPos2+distanceTics;
-        int targetPos3 = currentPos3+distanceTics;
-        int targetPos4 = currentPos4+distanceTics;
+            setTargetPosition(targetPos1,targetPos2,targetPos3,targetPos4);
 
-        setTargetPosition(targetPos1,targetPos2,targetPos3,targetPos4);
+            setPowerAll(power,power,power,power);
 
-        setPowerAll(power,power,power,power);
+            // Loop while we approach the target.  Display position as we go
+            while(FR.isBusy() && FL.isBusy() && BL.isBusy() && BR.isBusy()) {
+                telemetry.addData("FL Encoder", FL.getCurrentPosition());
+                telemetry.addData("BL Encoder", BL.getCurrentPosition());
+                telemetry.addData("FR Encoder", FR.getCurrentPosition());
+                telemetry.addData("BR Encoder", BR.getCurrentPosition());
+                telemetry.update();
+            }
 
-        // Loop while we approach the target.  Display position as we go
-        while(FR.isBusy() && FL.isBusy() && BL.isBusy() && BR.isBusy()) {
-            telemetry.addData("FL Encoder", FL.getCurrentPosition());
-            telemetry.addData("BL Encoder", BL.getCurrentPosition());
-            telemetry.addData("FR Encoder", FR.getCurrentPosition());
-            telemetry.addData("BR Encoder", BR.getCurrentPosition());
-            telemetry.update();
+            // We are done, turn motors off and switch back to normal driving mode.
+            FL.setPower(0);
+            FR.setPower(0);
+            BL.setPower(0);
+            BR.setPower(0);
+
+
         }
-
-        // We are done, turn motors off and switch back to normal driving mode.
-        FL.setPower(0);
-        FR.setPower(0);
-        BL.setPower(0);
-        BR.setPower(0);
-
 
     }
 
@@ -307,19 +319,6 @@ public class AutoDrivetrain extends Drivetrain {
         return imu.getZAngle();
     }
 
-    /**
-     * Sets power to all four drive motors
-     * @param fl power for right front motor
-     * @param fr power for right back motor
-     * @param bl power for left front motor
-     * @param br power for left back motor
-     */
-    public void setPowerAll(double fl, double fr, double bl, double br){
-        FL.setPower(fl);
-        FR.setPower(fr);
-        BL.setPower(bl);
-        BR.setPower(br);
-    }
 
     public void setTargetPosition(int fl, int fr, int bl, int br){
         FL.setTargetPosition(fl);
@@ -332,4 +331,17 @@ public class AutoDrivetrain extends Drivetrain {
     public void setTimer(ElapsedTime timer) {
         this.timer = timer;
     }
+
+    public DcMotor getOdometryLeft() {
+        return odometryLeft;
+    }
+
+    public DcMotor getOdometryRight() {
+        return odometryRight;
+    }
+
+    public DcMotor getOdometryX() {
+        return odometryX;
+    }
+
 }

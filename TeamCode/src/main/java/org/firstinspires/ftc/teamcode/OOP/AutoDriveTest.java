@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(group = "auto",name = "AutoDriveTest")
 public class AutoDriveTest extends LinearOpMode {
-    private AutoDrivetrain robot;
+    private AutoBot robot;
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
@@ -15,11 +15,9 @@ public class AutoDriveTest extends LinearOpMode {
         robot.turnDegrees(90,0.5);
     }
 
-
-
-
     public void initialize(){
-        robot = new AutoDrivetrain(hardwareMap);
+
+        robot = new AutoBot(hardwareMap);
     }
 }
 
