@@ -10,7 +10,7 @@ public abstract class Robot {
     }
 
 
-    //private DcMotor lift;
+
     protected DcMotor intakeLeft,intakeRight; //These will operate tje same just diff directions
     //private Servo pivotLeft, pivotRight; //Must move at same time(one is negated rotation)
     //private Servo ramp, clamp;

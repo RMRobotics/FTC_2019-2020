@@ -22,7 +22,6 @@ public class TeleDrivetrain extends Drivetrain {
     @Override
     protected void setupMotors(HardwareMap hardwareMap) {
         setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FR.setDirection(DcMotorSimple.Direction.FORWARD);
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
         setZeroBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }

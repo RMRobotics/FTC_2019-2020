@@ -56,7 +56,7 @@ public class AutoDrivetrain extends Drivetrain {
             setOdometryZeroBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
 
-        FR.setDirection(DcMotorSimple.Direction.FORWARD);
+        FR.setDirection(DcMotorSimple.Direction.REVERSE);
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
 
 

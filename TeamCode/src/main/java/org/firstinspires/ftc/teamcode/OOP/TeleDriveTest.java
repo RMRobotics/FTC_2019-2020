@@ -33,12 +33,13 @@ public class TeleDriveTest extends OpMode {
             telemetry.update();
         }
 
-        double fl = (forward + strafe + rotate) / -max;
-        double fr = (forward - strafe - rotate) / -max;
-        double bl = (forward - strafe + rotate) / -max;
-        double br = (forward + strafe - rotate) / -max;
+        double fl = (forward - strafe + rotate) / max;
+        double fr = (forward - strafe - rotate) / max;
+        double bl = (forward + strafe + rotate) / max;
+        double br = (forward + strafe - rotate) / max;
 
         robot.setPower(fl,fr,bl,br);
         robot.intake();
+        robot.lift();
     }
 }

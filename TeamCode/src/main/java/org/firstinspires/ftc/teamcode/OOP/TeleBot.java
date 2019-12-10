@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.OOP;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -7,6 +9,9 @@ public class TeleBot extends Robot {
     TeleDrivetrain drivetrain;
     private Gamepad gamepad1;
     private Gamepad gamepad2;
+    private DcMotor lift;
+
+
 
     public TeleBot(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2){
         this.drivetrain = new TeleDrivetrain(hardwareMap);
@@ -16,6 +21,12 @@ public class TeleBot extends Robot {
         setupAttachments(hardwareMap);
     }
 
+    @Override
+    public void setupAttachments(HardwareMap hardwareMap) {
+        super.setupAttachments(hardwareMap);
+        lift = hardwareMap.dcMotor.get("lift");
+        lift.setDirection(DcMotorSimple.Direction.REVERSE);
+    }
 
     @Override
     public void setPower(double fl, double fr, double bl, double br) {
@@ -34,6 +45,19 @@ public class TeleBot extends Robot {
         }else{
             intakeRight.setPower(0);
             intakeLeft.setPower(0);
+        }
+    }
+
+    /**
+     * Note that lift motor direction is reversed so positive power is associated with going up and vice versa
+     */
+    public void lift(){
+        if(gamepad1.left_trigger > 0){
+            lift.setPower(1);
+        }else if (gamepad1.right_trigger > 0){
+            lift.setPower(-1);
+        }else{
+            lift.setPower(0);
         }
     }
 
