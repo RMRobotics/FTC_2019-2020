@@ -1,17 +1,21 @@
-package org.firstinspires.ftc.teamcode.OOP;
+package org.firstinspires.ftc.teamcode.Testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "Working2.0",group = "tele")
+import org.firstinspires.ftc.teamcode.OOP.robot.TeleBot;
+
+@TeleOp(name = "Working2.0", group = "tele")
 public class TeleDriveTest extends OpMode {
     protected int max;
     protected TeleBot robot;
 
     @Override
     public void init() {
-        robot = new TeleBot(hardwareMap,gamepad1,gamepad2);
+        robot = new TeleBot(hardwareMap, gamepad1, gamepad2);
     }
+
+    double fl, fr, bl, br;
 
     public void loop() {
 
@@ -33,12 +37,12 @@ public class TeleDriveTest extends OpMode {
             telemetry.update();
         }
 
-        double fl = (forward - strafe + rotate) / max;
-        double fr = (forward - strafe - rotate) / max;
-        double bl = (forward + strafe + rotate) / max;
-        double br = (forward + strafe - rotate) / max;
+        fl = (forward - strafe + rotate) / max;
+        fr = (forward - strafe - rotate) / max;
+        bl = (forward + strafe + rotate) / max;
+        br = (forward + strafe - rotate) / max;
 
-        robot.setPower(fl,fr,bl,br);
+        robot.setPower(fl, fr, bl, br);
         robot.intake();
         robot.lift();
     }

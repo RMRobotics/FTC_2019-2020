@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode.OOP;
+package org.firstinspires.ftc.teamcode.OOP.drivetrain;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -39,11 +38,7 @@ public class AutoDrivetrain extends Drivetrain {
 
     @Override
     protected void setupMotors(HardwareMap hardwareMap) {
-        FL = hardwareMap.dcMotor.get("FL");
-        FR = hardwareMap.dcMotor.get("FR");
-        BL = hardwareMap.dcMotor.get("BL");
-        BR = hardwareMap.dcMotor.get("BR");
-
+        super.setupMotors(hardwareMap);
         if(isOdometryActive()){
             odometryLeft = hardwareMap.dcMotor.get("odometryLeft");
             odometryRight = hardwareMap.dcMotor.get("odometryRight");
@@ -53,15 +48,7 @@ public class AutoDrivetrain extends Drivetrain {
             setOdometryMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }else{
             setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            setOdometryZeroBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
-
-        FR.setDirection(DcMotorSimple.Direction.REVERSE);
-        BR.setDirection(DcMotorSimple.Direction.REVERSE);
-
-
-        setZeroBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
     }
 
     //maxJerk in power / second^2, maxAcceleration in power / second, maxVelocity in power, moveDistance in inches
@@ -156,7 +143,12 @@ public class AutoDrivetrain extends Drivetrain {
                     }
                 }
                 else{
-                    acceleration -= maxJerk * dTicks;
+                    if(acceleration >= 0){
+                        acceleration -= maxJerk * dTicks;
+                    }
+                    else{
+                        acceleration = 0;
+                    }
                 }
             }
 
@@ -193,21 +185,34 @@ public class AutoDrivetrain extends Drivetrain {
 
     }
 
+
+
+    public void setSpeedSpecial(double p){
+        FL.setPower(p);
+        FR.setPower(p/2);
+        BR.setPower(p);
+        BL.setPower(p);
+    }
     /**
      *  *Method borrowed from last year*
      * @param distanceInches
      */
     public void moveDistance(double distanceInches, double power){
         if(!odometryActive){
-            setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //Stop and reset encoder
+            setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
+             //Stop and reset encoder
             int distanceTics = (int)(distanceInches * CPI);
             int currentPos1 = FL.getCurrentPosition();
             int currentPos2 = FR.getCurrentPosition();
             int currentPos3 = BL.getCurrentPosition();
             int currentPos4 = BR.getCurrentPosition();
+            int startPos1 = currentPos1;
+            int startPos2 = currentPos2;
+            int startPos3 = currentPos3;
+            int startPos4 = currentPos4;
 
-            setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             int targetPos1 = currentPos1+distanceTics;
             int targetPos2 = currentPos2+distanceTics;
             int targetPos3 = currentPos3+distanceTics;
@@ -215,7 +220,7 @@ public class AutoDrivetrain extends Drivetrain {
 
             setTargetPosition(targetPos1,targetPos2,targetPos3,targetPos4);
 
-            setPowerAll(power,power,power,power);
+            setSpeedSpecial(power);
 
             // Loop while we approach the target.  Display position as we go
             while(FR.isBusy() && FL.isBusy() && BL.isBusy() && BR.isBusy()) {
@@ -223,6 +228,16 @@ public class AutoDrivetrain extends Drivetrain {
                 telemetry.addData("BL Encoder", BL.getCurrentPosition());
                 telemetry.addData("FR Encoder", FR.getCurrentPosition());
                 telemetry.addData("BR Encoder", BR.getCurrentPosition());
+
+                telemetry.addData("FL Start", startPos1 + ", Target: " +targetPos1);
+                telemetry.addData("BL Start", startPos2+ ", Target: " +targetPos2);
+                telemetry.addData("FR Start", startPos3+ ", Target: " +targetPos3);
+                telemetry.addData("BR Start", startPos4+ ", Target: " +targetPos4);
+
+                telemetry.addData("Power FR - ", FR.getPower());
+                telemetry.addData("Power FL - ", FL.getPower());
+                telemetry.addData("Power BL - ", BL.getPower());
+                telemetry.addData("Power BR - ", BR.getPower());
                 telemetry.update();
             }
 

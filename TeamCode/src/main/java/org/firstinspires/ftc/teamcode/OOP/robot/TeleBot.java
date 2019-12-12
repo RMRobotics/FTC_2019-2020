@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode.OOP;
+package org.firstinspires.ftc.teamcode.OOP.robot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.OOP.drivetrain.TeleDrivetrain;
 
 public class TeleBot extends Robot {
     TeleDrivetrain drivetrain;
@@ -27,6 +29,8 @@ public class TeleBot extends Robot {
         lift = hardwareMap.dcMotor.get("lift");
         lift.setDirection(DcMotorSimple.Direction.REVERSE);
     }
+
+
 
     @Override
     public void setPower(double fl, double fr, double bl, double br) {
@@ -53,9 +57,9 @@ public class TeleBot extends Robot {
      */
     public void lift(){
         if(gamepad1.left_trigger > 0){
-            lift.setPower(1);
+            lift.setPower(0.5);
         }else if (gamepad1.right_trigger > 0){
-            lift.setPower(-1);
+            lift.setPower(-0.5);
         }else{
             lift.setPower(0);
         }
