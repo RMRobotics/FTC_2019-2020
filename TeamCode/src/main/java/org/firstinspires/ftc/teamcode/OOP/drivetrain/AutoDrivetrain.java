@@ -13,7 +13,9 @@ public class AutoDrivetrain extends Drivetrain {
     //constants
     public final double MAX_JERK = 0;                //power / second^2
     public final double MAX_ACCELERATION = 0;        //power / second
-    public final double MAX_VELOCITY = 0;            //power
+    public final double MAX_VELOCITY = 0;
+    public final double INCHES_PER_SECOND = 34;
+    //power
     protected RevIMU imu;
     private BNO055IMU rev;
     private ElapsedTime timer;
@@ -32,8 +34,7 @@ public class AutoDrivetrain extends Drivetrain {
         setupMotors(hardwareMap);
         rev = hardwareMap.get(BNO055IMU.class, "imu");
         imu = new RevIMU(rev);
-        timer = null;
-
+        timer = new ElapsedTime();
     }
 
     @Override
@@ -47,7 +48,7 @@ public class AutoDrivetrain extends Drivetrain {
             setOdometryMode(DcMotor.RunMode.RUN_USING_ENCODER);
             setOdometryMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }else{
-            setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
     }
 
@@ -186,52 +187,43 @@ public class AutoDrivetrain extends Drivetrain {
     }
 
 
-
-    public void setSpeedSpecial(double p){
-        FL.setPower(p);
-        FR.setPower(p/2);
-        BR.setPower(p);
-        BL.setPower(p);
-    }
     /**
      *  *Method borrowed from last year*
      * @param distanceInches
      */
     public void moveDistance(double distanceInches, double power){
         if(!odometryActive){
-            setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
+            setSpecialMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            setSpecialMode(DcMotor.RunMode.RUN_TO_POSITION);
              //Stop and reset encoder
             int distanceTics = (int)(distanceInches * CPI);
             int currentPos1 = FL.getCurrentPosition();
-            int currentPos2 = FR.getCurrentPosition();
+            //int currentPos2 = FR.getCurrentPosition();
             int currentPos3 = BL.getCurrentPosition();
             int currentPos4 = BR.getCurrentPosition();
             int startPos1 = currentPos1;
-            int startPos2 = currentPos2;
+            //int startPos2 = currentPos2;
             int startPos3 = currentPos3;
             int startPos4 = currentPos4;
 
 
             int targetPos1 = currentPos1+distanceTics;
-            int targetPos2 = currentPos2+distanceTics;
+            //int targetPos2 = currentPos2+distanceTics;
             int targetPos3 = currentPos3+distanceTics;
             int targetPos4 = currentPos4+distanceTics;
 
-            setTargetPosition(targetPos1,targetPos2,targetPos3,targetPos4);
+            setTargetPosition(targetPos1,targetPos3,targetPos4);
 
-            setSpeedSpecial(power);
+            setPowerAll(power,power,power,power);
 
             // Loop while we approach the target.  Display position as we go
-            while(FR.isBusy() && FL.isBusy() && BL.isBusy() && BR.isBusy()) {
+            while(FL.isBusy() && BL.isBusy() && BR.isBusy()) {
                 telemetry.addData("FL Encoder", FL.getCurrentPosition());
                 telemetry.addData("BL Encoder", BL.getCurrentPosition());
-                telemetry.addData("FR Encoder", FR.getCurrentPosition());
                 telemetry.addData("BR Encoder", BR.getCurrentPosition());
 
                 telemetry.addData("FL Start", startPos1 + ", Target: " +targetPos1);
-                telemetry.addData("BL Start", startPos2+ ", Target: " +targetPos2);
-                telemetry.addData("FR Start", startPos3+ ", Target: " +targetPos3);
+                telemetry.addData("BL Start", startPos3+ ", Target: " +targetPos3);
                 telemetry.addData("BR Start", startPos4+ ", Target: " +targetPos4);
 
                 telemetry.addData("Power FR - ", FR.getPower());
@@ -292,12 +284,12 @@ public class AutoDrivetrain extends Drivetrain {
         int targetPos3 = currentPos3-distanceTics;
         int targetPos4 = currentPos4+distanceTics;
 
-        setTargetPosition(targetPos1,targetPos2,targetPos3,targetPos4);
+        //setTargetPosition(targetPos1,targetPos2,targetPos3,targetPos4); -THIS WILL BREAK THE CODE
 
         setPowerAll(power,-power,-power,power);
 
         // Loop while we approach the target.  Display position as we go
-        while(FR.isBusy() && FL.isBusy() && BL.isBusy() && BR.isBusy()) {
+        while(FL.isBusy() && BL.isBusy() && BR.isBusy()) {
             telemetry.addData("FL Encoder", FL.getCurrentPosition());
             telemetry.addData("BL Encoder", BL.getCurrentPosition());
             telemetry.addData("FR Encoder", FR.getCurrentPosition());
@@ -316,6 +308,57 @@ public class AutoDrivetrain extends Drivetrain {
     }
 
     /**
+     * Moves for a specified duration
+     * @param seconds
+     */
+    public void moveForDuration(double seconds, boolean isForward){
+        timer.reset();
+        setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        if(isForward){
+            setDrive(1);
+        }else{
+            setDrive(-1);
+        }
+
+        while(timer.seconds() < seconds){
+            telemetry.addData("Moving straight for duration: ", seconds + ", currently at "+ timer.seconds());
+            telemetry.update();
+        }
+        setDrive(0);
+    }
+
+    public void moveDistanceByInch(double inches, boolean isForward){
+        double secondsToMove = INCHES_PER_SECOND/inches;
+        moveForDuration(secondsToMove,isForward);
+    }
+
+
+    public void strafeForDuration(double seconds,boolean isLeft){
+        timer.reset();
+        setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        if(isLeft){
+            setStrafe(1);
+        }else{
+            setStrafe(-1);
+        }
+
+        while(timer.seconds() < seconds){
+            telemetry.addData("Strafing for duration: ", seconds + ", currently at "+ timer.seconds());
+            telemetry.update();
+        }
+        setStrafe(0);
+    }
+
+    public void strafeDistanceByInch(double inches, boolean isLeft){
+        double secondsToMove = INCHES_PER_SECOND/inches;
+        strafeForDuration(secondsToMove,isLeft);
+    }
+
+    public void setStrafe(double power){
+        setPowerAll(-power,-power,power,power);
+    }
+
+    /**
      * Gets the orientation of the robot using the REV IMU
      * @return the angle of the robot
      */
@@ -324,9 +367,9 @@ public class AutoDrivetrain extends Drivetrain {
     }
 
 
-    public void setTargetPosition(int fl, int fr, int bl, int br){
+    public void setTargetPosition(int fl, int bl, int br){
         FL.setTargetPosition(fl);
-        FR.setTargetPosition(fr);
+        //FR.setTargetPosition(fr);
         BL.setTargetPosition(bl);
         BR.setTargetPosition(br);
 
@@ -348,4 +391,11 @@ public class AutoDrivetrain extends Drivetrain {
         return odometryX;
     }
 
+
+    public void wait(double seconds){
+        timer.reset();
+        while(timer.seconds() < seconds){
+            telemetry.addData("Waiting...", "Current: "+ timer.seconds() + ", Target: " +seconds);
+        }
+    }
 }

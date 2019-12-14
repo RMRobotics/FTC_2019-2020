@@ -52,4 +52,39 @@ public class AutoBot extends Robot {
     public void pivot() {
 
     }
+//340 rpm gear down by 2 max speed per minute. 160 rpm/60
+    //34 inches/second
+    public void moveForDuration(double seconds, boolean isForward){
+
+        drivetrain.moveForDuration(seconds,isForward);
+
+
+    }
+
+    /**
+     * THIS IS A TIME-BASED MODE. Will move motors for a set time to achieve a certain distance.
+     * @param inches
+     */
+    public void moveForDistance(double inches,boolean isForward){
+        drivetrain.moveDistanceByInch(inches,isForward);
+    }
+
+    /**
+     * THIS A TIME_BASED MODE. Will move motors for a set time to achieve a certain distance.
+     * @param inches
+     */
+    public void strafeForDistance(double inches,boolean isForward){
+        drivetrain.strafeDistanceByInch(inches,isForward);
+    }
+
+
+    public void strafeForDuration(double seconds,boolean isForward){
+        drivetrain.strafeForDuration(seconds,isForward);
+    }
+
+    public void waitForDuration(double seconds){
+        drivetrain.wait(seconds);
+    }
+
+
 }

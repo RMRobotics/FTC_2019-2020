@@ -25,6 +25,7 @@ public abstract class Drivetrain {
 
     //Other variables
     protected ElapsedTime timer;
+    protected boolean isOpModeActive;
 
     //Map and Positioning
     protected OdometryMap map;
@@ -59,6 +60,7 @@ public abstract class Drivetrain {
         BL = hardwareMap.dcMotor.get("BL");
         BR = hardwareMap.dcMotor.get("BR");
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
+        FR.setDirection(DcMotorSimple.Direction.REVERSE);
         setZeroBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
@@ -91,10 +93,25 @@ public abstract class Drivetrain {
         BL.setMode(r);
         BR.setMode(r);
     }
+
+    protected void setSpecialMode(DcMotor.RunMode r) {
+        FL.setMode(r);
+        BL.setMode(r);
+        BR.setMode(r);
+    }
+
     public void setTelemetry(Telemetry telemetry) {
         this.telemetry = telemetry;
     }
     public Telemetry getTelemetry() {
         return telemetry;
+    }
+
+    public boolean isOpModeActive() {
+        return isOpModeActive;
+    }
+
+    public void setOpModeActive(boolean opModeActive) {
+        isOpModeActive = opModeActive;
     }
 }

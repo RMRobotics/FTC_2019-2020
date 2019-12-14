@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.OOP.robot;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.OOP.drivetrain.TeleDrivetrain;
 
@@ -12,6 +14,9 @@ public class TeleBot extends Robot {
     private Gamepad gamepad1;
     private Gamepad gamepad2;
     private DcMotor lift;
+    private CRServo pivotLeft,pivotRight;
+    private Servo clamp;
+    private boolean isClamped;
 
 
 
@@ -28,6 +33,9 @@ public class TeleBot extends Robot {
         super.setupAttachments(hardwareMap);
         lift = hardwareMap.dcMotor.get("lift");
         lift.setDirection(DcMotorSimple.Direction.REVERSE);
+        pivotLeft = hardwareMap.crservo.get("pivotLeft");
+        pivotRight = hardwareMap.crservo.get("pivotRight");
+        clamp = hardwareMap.servo.get("clamp");
     }
 
 
@@ -56,20 +64,28 @@ public class TeleBot extends Robot {
      * Note that lift motor direction is reversed so positive power is associated with going up and vice versa
      */
     public void lift(){
-        if(gamepad1.left_trigger > 0){
+        if(gamepad2.left_trigger > 0){
             lift.setPower(0.5);
-        }else if (gamepad1.right_trigger > 0){
+        }else if (gamepad2.right_trigger > 0){
             lift.setPower(-0.5);
         }else{
             lift.setPower(0);
         }
     }
 
-    @Override //This is temporary to not create errors
-    public void pivot() {
 
+    public void clamp(){
+        if(gamepad2.a){
+            if(isClamped){
+                clamp.setPosition(0);
+                isClamped = false;
+            }else{
+                clamp.setPosition(1);
+                isClamped = true;
+            }
+        }
     }
-    /*
+
     @Override
     public void pivot() {
         //Reset
@@ -77,15 +93,18 @@ public class TeleBot extends Robot {
         //swing back
         //COnstant speed
 
-        if(gamepad2.x){ //Default Position
-            pivotLeft.setPosition(defaultPosition);
-            pivotRight.setPosition(defaultPosition);
-        }else if(gamepad2.a) {
-            pivotLeft.setPosition(defaultPosition-(0.5(1-defaultPosition)));
-            pivotRight.setPosition();
+        if(gamepad2.left_bumper){ //turn forward
+            pivotLeft.setPower(1);
+            pivotRight.setPower(-1);
+        }else if(gamepad2.right_bumper) { //turn backward
+            pivotLeft.setPower(-1);
+            pivotRight.setPower(1);
+        }else{
+            pivotRight.setPower(0);
+            pivotLeft.setPower(0);
         }
     }
 
 
- */
+
 }

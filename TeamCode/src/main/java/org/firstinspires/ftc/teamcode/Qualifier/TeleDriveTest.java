@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.Testing;
+package org.firstinspires.ftc.teamcode.Qualifier;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.OOP.robot.TeleBot;
 
-@TeleOp(name = "Working2.0", group = "tele")
+@TeleOp(name = "QualiferTele", group = "tele")
 public class TeleDriveTest extends OpMode {
     protected int max;
     protected TeleBot robot;
@@ -18,7 +18,6 @@ public class TeleDriveTest extends OpMode {
     double fl, fr, bl, br;
 
     public void loop() {
-
 
         double forward, strafe, rotate;
         forward = -gamepad1.left_stick_y;
@@ -45,5 +44,7 @@ public class TeleDriveTest extends OpMode {
         robot.setPower(fl, fr, bl, br);
         robot.intake();
         robot.lift();
+        robot.pivot();
+        robot.clamp();
     }
 }
