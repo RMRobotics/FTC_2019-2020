@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.IIMU;
 
 /**
  * Created by Angelita on 11/20/2018.
@@ -44,16 +43,16 @@ public abstract class armisticeAutoSuper extends LinearOpMode {
         BR = hardwareMap.dcMotor.get("BR");
 //        intake = hardwareMap.crservo.get("intake");
 
-        marker = hardwareMap.servo.get("marker");
+        //marker = hardwareMap.servo.get("marker");
 
-        hook = hardwareMap.dcMotor.get("hook");
-        hook.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        hook.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hook.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //hook = hardwareMap.dcMotor.get("hook");
+        //hook.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //hook.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //hook.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
 
-        FR.setDirection(DcMotor.Direction.REVERSE);
+        //FR.setDirection(DcMotor.Direction.REVERSE);
         BR.setDirection(DcMotor.Direction.REVERSE);
 
        setZeroMode(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -126,15 +125,15 @@ public abstract class armisticeAutoSuper extends LinearOpMode {
         int currentPos4 = BR.getCurrentPosition();
         //distanceTics is num of tics it needs to travel
         int distanceTics = (int)(distanceInches * CPI);
-
-        // Prepare to drive to target position
-        setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // Set target position and speed
         FL.setTargetPosition(currentPos1 + distanceTics);
         FR.setTargetPosition(currentPos2 + distanceTics);
         BL.setTargetPosition(currentPos3 + distanceTics);
         BR.setTargetPosition(currentPos4 + distanceTics);
+        // Prepare to drive to target position
+        setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // Set target position and speed
+
 
         FL.setPower(power);
         FR.setPower(power);

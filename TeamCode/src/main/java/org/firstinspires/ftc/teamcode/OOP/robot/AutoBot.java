@@ -1,6 +1,9 @@
-package org.firstinspires.ftc.teamcode.OOP;
+package org.firstinspires.ftc.teamcode.OOP.robot;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.OOP.drivetrain.AutoDrivetrain;
 
 public class AutoBot extends Robot {
     private AutoDrivetrain drivetrain;
@@ -10,6 +13,14 @@ public class AutoBot extends Robot {
         drivetrain = new AutoDrivetrain(hardwareMap,false);
         setupAttachments(hardwareMap);
 
+    }
+
+    public void setDrivetrain(AutoDrivetrain drivetrain) {
+        this.drivetrain = drivetrain;
+    }
+
+    public AutoDrivetrain getDrivetrain(){
+        return drivetrain;
     }
 
     public void moveDistance(double distanceInches, double power){
@@ -32,6 +43,9 @@ public class AutoBot extends Robot {
     @Override
     public void intake() {
 
+    }
+    public void setTelemetry(Telemetry t){
+        drivetrain.setTelemetry(t);
     }
 
     @Override

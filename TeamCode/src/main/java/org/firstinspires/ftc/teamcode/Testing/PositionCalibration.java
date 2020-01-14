@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.firstinspires.ftc.teamcode.OOP.AutoDrivetrain;
+import org.firstinspires.ftc.teamcode.OOP.drivetrain.AutoDrivetrain;
 
 import java.io.File;
 @Autonomous(group = "auto",name = "OdometryCalibration")

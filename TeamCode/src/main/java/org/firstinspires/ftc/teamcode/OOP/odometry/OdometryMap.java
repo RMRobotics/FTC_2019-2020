@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.OOP;
-
-import org.firstinspires.ftc.teamcode.OOP.Square;
+package org.firstinspires.ftc.teamcode.OOP.odometry;
 
 public class OdometryMap {
     private Square[][] map;

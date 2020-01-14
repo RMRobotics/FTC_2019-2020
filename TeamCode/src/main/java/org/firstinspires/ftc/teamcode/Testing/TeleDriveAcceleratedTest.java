@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode.OOP;
+package org.firstinspires.ftc.teamcode.Testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "Working2.0", group = "tele")
+import org.firstinspires.ftc.teamcode.OOP.robot.TeleBot;
+
+@TeleOp(name = "AccelerationTest", group = "tele")
 public class TeleDriveAcceleratedTest extends OpMode {
     protected int max;
     protected TeleBot robot;
@@ -55,12 +57,13 @@ public class TeleDriveAcceleratedTest extends OpMode {
             telemetry.update();
         }
 
-        fl = accelerationMultiplier * (forward + strafe + rotate) / -max;
-        fr = accelerationMultiplier * (forward - strafe - rotate) / -max;
-        bl = accelerationMultiplier * (forward - strafe + rotate) / -max;
-        br = accelerationMultiplier * (forward + strafe - rotate) / -max;
+        fl = (forward - strafe + rotate) / max;
+        fr = (forward - strafe - rotate) / max;
+        bl = (forward + strafe + rotate) / max;
+        br = (forward + strafe - rotate) / max;
 
         robot.setPower(fl, fr, bl, br);
         robot.intake();
+        robot.lift();
     }
 }

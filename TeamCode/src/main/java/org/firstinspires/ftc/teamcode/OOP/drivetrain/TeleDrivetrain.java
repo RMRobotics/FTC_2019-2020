@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.OOP;
+package org.firstinspires.ftc.teamcode.OOP.drivetrain;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -21,10 +20,8 @@ public class TeleDrivetrain extends Drivetrain {
 
     @Override
     protected void setupMotors(HardwareMap hardwareMap) {
+        super.setupMotors(hardwareMap);
         setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FR.setDirection(DcMotorSimple.Direction.FORWARD);
-        BR.setDirection(DcMotorSimple.Direction.REVERSE);
-        setZeroBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void setPowerAll(double fl, double fr, double bl, double br){

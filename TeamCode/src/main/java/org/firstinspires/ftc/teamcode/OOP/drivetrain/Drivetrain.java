@@ -1,10 +1,13 @@
-package org.firstinspires.ftc.teamcode.OOP;
+package org.firstinspires.ftc.teamcode.OOP.drivetrain;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.OOP.odometry.OdometryMap;
+import org.firstinspires.ftc.teamcode.OOP.odometry.Pose;
 
 public abstract class Drivetrain {
 
@@ -50,7 +53,15 @@ public abstract class Drivetrain {
         BR.setPower(br);
     }
 
-    abstract protected void setupMotors(HardwareMap hardwareMap);
+    protected void setupMotors(HardwareMap hardwareMap){
+        FL = hardwareMap.dcMotor.get("FL");
+        FR = hardwareMap.dcMotor.get("FR");
+        BL = hardwareMap.dcMotor.get("BL");
+        BR = hardwareMap.dcMotor.get("BR");
+        BR.setDirection(DcMotorSimple.Direction.REVERSE);
+        setZeroBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+    }
 
     //other methods
     protected void holdUp(double num) {
@@ -61,6 +72,8 @@ public abstract class Drivetrain {
     protected void moveDistance(double distanceInches, double power){
 
     }
+
+
 
     public double getCPI() {
         return CPI;
