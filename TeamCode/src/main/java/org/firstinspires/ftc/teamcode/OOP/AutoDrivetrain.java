@@ -66,31 +66,40 @@ public class AutoDrivetrain extends Drivetrain {
 
     //maxJerk in power / second^2, maxAcceleration in power / second, maxVelocity in power, moveDistance in inches
     public void acceleratedMoveStraight(double maxJerk, double maxAcceleration, double maxVelocity, double moveDistance, DriveDirection direction){
-        double power = 0;
-
         double tickDistance = CPI * moveDistance;
         double halfTickDistance = tickDistance / 2;
         double quarterTickDistance = tickDistance / 4;
+        double threeQuarterTickDistance = quarterTickDistance * 3;
         double halfMaxVelocity = maxVelocity / 2;
 
         double acceleration = 0;
         double velocity = 0;
         double ticks = 0;
+        double ticksAtMaxAcceleration = 0;
+        double dTicks = 1;
+        double previousTicks = 0;
+        double halfVelocityTicks = 0;
+        double directionMultiplier;
 
         boolean reachedHalfMaxVelocity = false;
         boolean reachedMaxAcceleration = false;
         boolean reachedHalfTicks = false;
+        boolean reachedThreeQuarterTickDistance = false;
+        boolean reachedFullTicks = false;
         boolean reachedMaxVelocity = false;
 
-        double ticksAtMaxAcceleration = 0;
+        if(direction == DriveDirection.FORWARD){
+            directionMultiplier = 1;
+        }
+        else if(direction == DriveDirection.BACKWARD){
+            directionMultiplier = -1;
+        }
+        else{
+            //error
+            System.exit(0);
+        }
 
-        double dTicks = 1;
-
-        double previousTicks = 0;
-
-        double halfVelocityTicks = 0;
-
-
+        //reset encoders to zero
         setOdometryMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //get to half velocity
@@ -106,7 +115,6 @@ public class AutoDrivetrain extends Drivetrain {
 
             previousTicks = ticks;
 
-
             if(acceleration < maxAcceleration){
                 acceleration += maxJerk * dTicks;
             }
@@ -118,7 +126,6 @@ public class AutoDrivetrain extends Drivetrain {
             }
 
             velocity += acceleration * dTicks;
-
             setDrive(velocity);
 
             if(velocity >= halfMaxVelocity){
@@ -170,6 +177,85 @@ public class AutoDrivetrain extends Drivetrain {
             }
         }
 
+        //get to half max velocity (while slowing down)
+        reachedHalfMaxVelocity = false;
+        reachedMaxAcceleration = false;
+        acceleration = 0;
+        ticksAtMaxAcceleration = ticks;
+
+        while(! reachedHalfMaxVelocity && ! reachedThreeQuarterTickDistance){
+
+            ticks = odometryRight.getCurrentPosition();
+
+            if((ticks - previousTicks) > 1){
+                dTicks = ticks - previousTicks;
+            }
+            else{
+                dTicks = 1;
+            }
+
+            previousTicks = ticks;
+
+            if(acceleration > -maxAcceleration){
+                acceleration -= maxJerk * dTicks;
+            }
+            else{
+                if(! reachedMaxAcceleration) {
+                    ticksAtMaxAcceleration = ticks;
+                    reachedMaxAcceleration = true;
+                }
+            }
+
+            velocity -= acceleration * dTicks;
+            setDrive(velocity);
+
+            if(velocity <= halfMaxVelocity){
+                reachedHalfMaxVelocity = true;
+            }
+            if(ticks >= threeQuarterTickDistance){
+                reachedThreeQuarterTickDistance = true;
+            }
+        }
+
+        ticksAtMaxAcceleration = ticks - ticksAtMaxAcceleration;
+        halfVelocityTicks = ticks;
+
+        while(reachedFullTicks){
+            ticks = odometryRight.getCurrentPosition();
+
+            if((ticks - previousTicks) > 1){
+                dTicks = ticks - previousTicks;
+            }
+            else{
+                dTicks = 1;
+            }
+
+            previousTicks = ticks;
+
+            if(! reachedMaxVelocity){
+                if(reachedMaxAcceleration){
+                    if(odometryRight.getCurrentPosition() <= halfVelocityTicks + ticksAtMaxAcceleration){
+                        velocity -= acceleration * dTicks;
+                        setDrive(velocity);
+                    }
+                    else{
+                        reachedMaxAcceleration = false;
+                    }
+                }
+                else{
+                    if(acceleration <= 0){
+                        acceleration += maxJerk * dTicks;
+                    }
+                    else{
+                        acceleration = 0;
+                    }
+                }
+            }
+
+            if(ticks >= tickDistance){
+                reachedFullTicks = true;
+            }
+        }
     }
 
     public boolean isOdometryActive() {
