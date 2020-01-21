@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OOP.robot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public abstract class Robot {
@@ -14,7 +15,8 @@ public abstract class Robot {
     protected DcMotor intakeLeft,intakeRight; //These will operate tje same just diff directions
     //private Servo pivotLeft, pivotRight; //Must move at same time(one is negated rotation)
     //private Servo ramp, clamp;
-
+    protected Gamepad gamepad1;
+    protected Gamepad gamepad2;
     private final double PIVOT_POS = 0.5;
     private double defaultPosition;
 

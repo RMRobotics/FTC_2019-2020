@@ -6,7 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.OOP.robot.AutoBot;
 @Autonomous(name = "Auto-Blue-Foundation", group = "auto")
 public class AutoDriveTestBlue extends LinearOpMode {
-
+    /**
+     * ======================================This has drivepath settings=======================================
+     */
     private AutoBot robot;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -23,5 +25,7 @@ public class AutoDriveTestBlue extends LinearOpMode {
 
         robot = new AutoBot(hardwareMap);
         robot.setTelemetry(telemetry);
+        robot.setDrivePath();
+
     }
 }

@@ -7,11 +7,10 @@ import org.firstinspires.ftc.teamcode.OOP.drivetrain.AutoDrivetrain;
 
 public class AutoBot extends Robot {
     private AutoDrivetrain drivetrain;
-
+    private AutoSettings autoSettings;
     public AutoBot(HardwareMap hardwareMap){
         drivetrain = new AutoDrivetrain(hardwareMap,false);
         setupAttachments(hardwareMap);
-
     }
 
     /**
@@ -20,6 +19,11 @@ public class AutoBot extends Robot {
 
     public void setTelemetry(Telemetry t){
         drivetrain.setTelemetry(t);
+    }
+
+
+    public void addTelemetry(String caption, String data){
+        drivetrain.getTelemetry().addData(caption,data);
     }
 
     public void setDrivetrain(AutoDrivetrain drivetrain) {
@@ -135,4 +139,62 @@ public class AutoBot extends Robot {
 
     }
 
+    public void setDrivePath(){
+        boolean optionChosen = false;
+        AutoSettings settings = new AutoSettings();
+        addTelemetry("Settings","");
+        addTelemetry("Q1: Blue or Red","Press A/B");
+        do {
+            if(gamepad1.a || gamepad2.b){
+                if(gamepad1.a){
+                    settings.setTeamColor(AutoSettings.Settings.BLUE);
+                }else if(gamepad1.b){
+                    settings.setTeamColor(AutoSettings.Settings.RED);
+                }
+                optionChosen = true;
+            }
+        }while(!optionChosen);
+        optionChosen = false;
+        addTelemetry("Q2: Foundation or Skystone", "Press A/B");
+        do {
+            if(gamepad1.a || gamepad2.b){
+                if(gamepad1.a){
+                    settings.setFieldSide(AutoSettings.Settings.FOUNDATION);
+                }else if(gamepad1.b){
+                    settings.setFieldSide(AutoSettings.Settings.SKYSTONE);
+                }
+                optionChosen = true;
+            }
+        }while(!optionChosen);
+        optionChosen = false;
+        addTelemetry("Q3: Additional Run Options","Press the corresponding button");
+        addTelemetry("\tA:","Simple");
+        addTelemetry("\tB:","Advanced");
+        do {
+            if(gamepad1.a || gamepad2.b){
+                if(gamepad1.a){
+                    settings.setComplexity(AutoSettings.Settings.SIMPLE);
+                }else if(gamepad1.b){
+                    settings.setComplexity(AutoSettings.Settings.ADVANCED);
+                }
+                optionChosen = true;
+            }
+        }while(!optionChosen);
+        autoSettings = settings;
+    }
+    /*
+
+    private void waitForControllerInput(){
+        do {
+            if(gamepad1.a || gamepad2.b){
+                if(gamepad1.a){
+                    settings.setO(AutoSettings.Settings.BLUE);
+                }else if(gamepad1.b){
+                    settings.setTeamColor(AutoSettings.Settings.RED);
+                }
+                optionChosen = true;
+            }
+        }while(!optionChosen);
+    }
+    */
 }

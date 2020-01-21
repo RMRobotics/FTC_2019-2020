@@ -11,8 +11,7 @@ import org.firstinspires.ftc.teamcode.OOP.drivetrain.TeleDrivetrain;
 
 public class TeleBot extends Robot {
     TeleDrivetrain drivetrain;
-    private Gamepad gamepad1;
-    private Gamepad gamepad2;
+
     private DcMotor lift;
     private CRServo pivotLeft,pivotRight;
     private Servo clamp;

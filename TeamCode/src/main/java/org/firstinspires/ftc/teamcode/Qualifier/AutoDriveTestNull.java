@@ -9,9 +9,17 @@ import org.firstinspires.ftc.teamcode.OOP.robot.AutoBot;
 public class AutoDriveTestNull extends LinearOpMode {
 
     private AutoBot robot;
+
+
+
+
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
+
+        //Robot
+
+
         waitForStart();
 
         //robot.strafeForDistance(50.75,true);
@@ -23,5 +31,7 @@ public class AutoDriveTestNull extends LinearOpMode {
 
         robot = new AutoBot(hardwareMap);
         robot.setTelemetry(telemetry);
+
+
     }
 }
