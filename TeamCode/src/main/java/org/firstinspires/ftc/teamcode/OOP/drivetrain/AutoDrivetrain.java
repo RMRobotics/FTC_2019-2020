@@ -375,8 +375,8 @@ public class AutoDrivetrain extends Drivetrain {
         setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
         int targetPos1 = currentPos1+distanceTics;
         int targetPos2 = currentPos2-distanceTics;
-        int targetPos3 = currentPos3-distanceTics;
         int targetPos4 = currentPos4+distanceTics;
+        int targetPos3 = currentPos3-distanceTics;
 
         //setTargetPosition(targetPos1,targetPos2,targetPos3,targetPos4); -THIS WILL BREAK THE CODE
 
@@ -396,7 +396,6 @@ public class AutoDrivetrain extends Drivetrain {
         FR.setPower(0);
         BL.setPower(0);
         BR.setPower(0);
-
 
 
     }
@@ -466,7 +465,6 @@ public class AutoDrivetrain extends Drivetrain {
         //FR.setTargetPosition(fr);
         BL.setTargetPosition(bl);
         BR.setTargetPosition(br);
-
     }
 
     public void setTimer(ElapsedTime timer) {
