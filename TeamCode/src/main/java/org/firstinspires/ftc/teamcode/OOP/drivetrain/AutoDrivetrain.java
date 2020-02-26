@@ -29,11 +29,22 @@ public class AutoDrivetrain extends Drivetrain {
     protected DcMotor odometryRight;
 
     //constructors
-    public AutoDrivetrain(HardwareMap hardwareMap, boolean odometryActive){
+    public AutoDrivetrain(HardwareMap hardwareMap){
         this.odometryActive = odometryActive;
         setupMotors(hardwareMap);
+        //The rev instance variable is set to the rev orientation sensor from the hardwareMap
         rev = hardwareMap.get(BNO055IMU.class, "imu");
+
+        //This actually very good practice. Hides the complexity of the raw rev sensor output itself,
+        //and replaces it with just the set of methods and values that the opMode coder needs.
         imu = new RevIMU(rev);
+
+        //set up the IMU.
+        imu.initialize();
+        //Use an offset of zero. This value subtracted from the imu's output values
+        //TODO - In what case would a nonzero offset be necessary?
+        imu.setOffset(0);
+
         timer = new ElapsedTime();
     }
 
@@ -278,55 +289,52 @@ public class AutoDrivetrain extends Drivetrain {
      * @param distanceInches
      */
     public void moveDistance(double distanceInches, double power){
-        if(!odometryActive){
-            setSpecialMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            setSpecialMode(DcMotor.RunMode.RUN_TO_POSITION);
-             //Stop and reset encoder
-            int distanceTics = (int)(distanceInches * CPI);
-            int currentPos1 = FL.getCurrentPosition();
-            //int currentPos2 = FR.getCurrentPosition();
-            int currentPos3 = BL.getCurrentPosition();
-            int currentPos4 = BR.getCurrentPosition();
-            int startPos1 = currentPos1;
-            //int startPos2 = currentPos2;
-            int startPos3 = currentPos3;
-            int startPos4 = currentPos4;
+         //Stop and reset encoder
+        int distanceTics = (int)(distanceInches * CPI);
+        int currentPos1 = FL.getCurrentPosition();
+        //int currentPos2 = FR.getCurrentPosition();
+        int currentPos3 = BL.getCurrentPosition();
+        int currentPos4 = BR.getCurrentPosition();
+        int startPos1 = currentPos1;
+        //int startPos2 = currentPos2;
+        int startPos3 = currentPos3;
+        int startPos4 = currentPos4;
 
 
-            int targetPos1 = currentPos1+distanceTics;
-            //int targetPos2 = currentPos2+distanceTics;
-            int targetPos3 = currentPos3+distanceTics;
-            int targetPos4 = currentPos4+distanceTics;
+        int targetPos1 = currentPos1+distanceTics;
+        //int targetPos2 = currentPos2+distanceTics;
+        int targetPos3 = currentPos3+distanceTics;
+        int targetPos4 = currentPos4+distanceTics;
 
-            setTargetPosition(targetPos1,targetPos3,targetPos4);
+        setTargetPosition(targetPos1,targetPos3,targetPos4);
 
-            setPowerAll(power,power,power,power);
+        setPowerAll(power,power,power,power);
 
-            // Loop while we approach the target.  Display position as we go
-            while(FL.isBusy() && BL.isBusy() && BR.isBusy()) {
-                telemetry.addData("FL Encoder", FL.getCurrentPosition());
-                telemetry.addData("BL Encoder", BL.getCurrentPosition());
-                telemetry.addData("BR Encoder", BR.getCurrentPosition());
+        // Loop while we approach the target.  Display position as we go
+        while(FL.isBusy() && BL.isBusy() && BR.isBusy()) {
+            telemetry.addData("FL Encoder", FL.getCurrentPosition());
+            telemetry.addData("BL Encoder", BL.getCurrentPosition());
+            telemetry.addData("BR Encoder", BR.getCurrentPosition());
 
-                telemetry.addData("FL Start", startPos1 + ", Target: " +targetPos1);
-                telemetry.addData("BL Start", startPos3+ ", Target: " +targetPos3);
-                telemetry.addData("BR Start", startPos4+ ", Target: " +targetPos4);
+            telemetry.addData("FL Start", startPos1 + ", Target: " +targetPos1);
+            telemetry.addData("BL Start", startPos3+ ", Target: " +targetPos3);
+            telemetry.addData("BR Start", startPos4+ ", Target: " +targetPos4);
 
-                telemetry.addData("Power FR - ", FR.getPower());
-                telemetry.addData("Power FL - ", FL.getPower());
-                telemetry.addData("Power BL - ", BL.getPower());
-                telemetry.addData("Power BR - ", BR.getPower());
-                telemetry.update();
-            }
-
-            // We are done, turn motors off and switch back to normal driving mode.
-            FL.setPower(0);
-            FR.setPower(0);
-            BL.setPower(0);
-            BR.setPower(0);
-
-
+            telemetry.addData("Power FR - ", FR.getPower());
+            telemetry.addData("Power FL - ", FL.getPower());
+            telemetry.addData("Power BL - ", BL.getPower());
+            telemetry.addData("Power BR - ", BR.getPower());
+            telemetry.update();
         }
+
+        // We are done, turn motors off and switch back to normal driving mode.
+        FL.setPower(0);
+        FR.setPower(0);
+        BL.setPower(0);
+        BR.setPower(0);
+
+
+
 
     }
 
@@ -483,5 +491,11 @@ public class AutoDrivetrain extends Drivetrain {
         while(timer.seconds() < seconds){
             telemetry.addData("Waiting...", "Current: "+ timer.seconds() + ", Target: " +seconds);
         }
+    }
+
+
+    protected void imuInfo(){
+        telemetry.addData("Angle: ", imu.getZAngle());
+        telemetry.update();
     }
 }

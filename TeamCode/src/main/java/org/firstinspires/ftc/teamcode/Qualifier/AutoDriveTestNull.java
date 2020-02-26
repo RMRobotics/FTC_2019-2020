@@ -11,8 +11,6 @@ public class AutoDriveTestNull extends LinearOpMode {
     private AutoBot robot;
 
 
-
-
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();

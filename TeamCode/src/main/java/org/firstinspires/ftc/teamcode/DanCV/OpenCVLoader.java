@@ -1,0 +1,53 @@
+package org.firstinspires.ftc.teamcode.DanCV;
+
+
+import android.os.Environment;
+import android.util.Log;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+public class OpenCVLoader {
+    // This path may need to be changed for Samsung S5 phones;
+    // its hardcoded because idk how else to get the path without a Context.
+    // Feel free to change the value to fit the phone you are using.
+
+    private static String filesDir = "/data/user/0/com.qualcomm.ftcrobotcontroller/files";
+    public static void setFilesDir(String path) {
+        filesDir = path;
+    }
+    public static void loadOpenCV() {
+
+        File protectedStorageLib = new File(filesDir + "/extra/libopencv_java3.so");
+        File protectedExtraFolder = new File(filesDir + "/extra/");
+        File internalStorageLib = new File(Environment.getExternalStorageDirectory() + "/DanCV/libopencv_java3.so"); //Changed from EnderCV
+        if (!protectedStorageLib.exists() && internalStorageLib.exists()) {
+            if (!protectedExtraFolder.exists())
+                protectedExtraFolder.mkdir();
+
+        }
+
+        try {
+            /*
+             * Copy the file with a 1MiB buffer
+             */
+            InputStream is = new FileInputStream(internalStorageLib);
+            OutputStream os = new FileOutputStream(protectedStorageLib);
+            byte[] buff = new byte[1024];
+            int len;
+            while ((len = is.read(buff)) > 0) {
+                os.write(buff, 0, len);
+            }
+            is.close();
+            os.close();
+
+            System.load(protectedStorageLib.getAbsolutePath());
+        } catch (Exception e) {
+            Log.e("DanCV", "OpenCV Load Error: ", e);
+        }
+
+    }
+}

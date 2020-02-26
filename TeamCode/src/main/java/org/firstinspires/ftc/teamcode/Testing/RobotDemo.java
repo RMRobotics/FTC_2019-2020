@@ -18,7 +18,7 @@ public class RobotDemo extends OpMode {
         FR = hardwareMap.dcMotor.get("FR");
         BL = hardwareMap.dcMotor.get("BL");
         BR = hardwareMap.dcMotor.get("BR");
-        lift = hardwareMap.dcMotor.get("lift");
+        //lift = hardwareMap.dcMotor.get("lift");
 
         FR.setDirection(DcMotor.Direction.REVERSE);
         BR.setDirection(DcMotor.Direction.REVERSE);

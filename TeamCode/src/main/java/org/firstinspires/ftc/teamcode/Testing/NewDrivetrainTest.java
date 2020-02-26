@@ -19,7 +19,10 @@ public class NewDrivetrainTest extends OpMode {
         BR = hardwareMap.dcMotor.get("BR");
 
         FR.setDirection(DcMotorSimple.Direction.FORWARD);
-        BR.setDirection(DcMotorSimple.Direction.REVERSE);
+        //BR.setDirection(DcMotorSimple.Direction.REVERSE);
+        BL.setDirection(DcMotorSimple.Direction.REVERSE);
+        FL.setDirection(DcMotorSimple.Direction.REVERSE); //added
+
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -29,17 +32,21 @@ public class NewDrivetrainTest extends OpMode {
 
     public void loop() {
 
-        telemetry.addData("FL Encoder", FL.getCurrentPosition());
+
+
+        double forward, strafe, rotate;
+        forward = -gamepad1.left_stick_y;
+        strafe = gamepad1.left_stick_x;
+        rotate = gamepad1.right_stick_x;
+
+
+//        telemetry.addData("FL Encoder",);
         telemetry.addData("BL Encoder", BL.getCurrentPosition());
         telemetry.addData("FR Encoder", FR.getCurrentPosition());
         telemetry.addData("BR Encoder", BR.getCurrentPosition());
         telemetry.addData("Power", FL.getPower());
         telemetry.update();
 
-        double forward, strafe, rotate;
-        forward = -gamepad1.left_stick_y;
-        strafe = gamepad1.left_stick_x;
-        rotate = gamepad1.right_stick_x;
 
         //toggles to slowmode
         if (gamepad1.a) {

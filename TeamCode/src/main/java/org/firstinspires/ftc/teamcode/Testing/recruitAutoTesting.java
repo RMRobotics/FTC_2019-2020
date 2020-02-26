@@ -2,48 +2,39 @@ package org.firstinspires.ftc.teamcode.Testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous()
+import org.firstinspires.ftc.teamcode.OOP.robot.AutoBot;
 
-public abstract class recruitAutoTesting extends LinearOpMode {
+@Autonomous(name = "AutoTestBot", group = "auto")
 
-    DcMotor FL;
-    DcMotor FR;
-    DcMotor BL;
-    DcMotor BR;
+public class recruitAutoTesting extends LinearOpMode {
+    private AutoBot robot;
 
-    public void initialize() {
-        DcMotor Lift;
+
+
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        initialize();
+
+        //Robot
+
+
+        waitForStart();
+        robot.moveDistance(50,0.3);
+        robot.toggleSwivel();
+        robot.toggleSwivel();
+        //robot.strafeForDistance(50.75,true);
+
 
     }
 
+    public void initialize(){
 
+        robot = new AutoBot(hardwareMap);
+        robot.setTelemetry(telemetry);
+        //robot.setDrivePath();
 
-    public void initialize (Boolean i) {
-        FL = hardwareMap.dcMotor.get("FL");
-        FR = hardwareMap.dcMotor.get("FR");
-        BL = hardwareMap.dcMotor.get("BL");
-        BR = hardwareMap.dcMotor.get("BR");
-
-        FL.setPower(1);
-        FR.setPower(1);
-        BL.setPower(1);
-        BR.setPower(1);
-
-        sleep(200);
-
-        FL.setPower(1);
-        FR.setPower(1);
-        BL.setPower(1);
-        BR.setPower(1);
-
-        sleep(200);
-
-        FL.setPower(0);
-        FR.setPower(0);
-        BL.setPower(0);
-        BR.setPower(0);
     }
 
 

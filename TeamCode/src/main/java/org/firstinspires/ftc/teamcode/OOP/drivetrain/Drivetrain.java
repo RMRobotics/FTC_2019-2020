@@ -6,8 +6,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.OOP.odometry.OdometryMap;
-import org.firstinspires.ftc.teamcode.OOP.odometry.Pose;
 
 public abstract class Drivetrain {
 
@@ -17,7 +15,11 @@ public abstract class Drivetrain {
     protected final float FTC_FIELD_SIZE_MM = (12 * 12 - 2) * MM_PER_INCH;
     protected final double CPI = 86.93063762;
     protected Telemetry telemetry;
+
     //Motors
+    //The hardwareMap is essentially the access point of the hardware on the robot
+    //Here the motors are accessed through the the hardwareMap by the name set in the FTC-app configs.
+    //These strings should MOST likely be constants since they should never change but... ok.
     public DcMotor FL;
     public DcMotor FR;
     public DcMotor BL;
@@ -26,10 +28,6 @@ public abstract class Drivetrain {
     //Other variables
     protected ElapsedTime timer;
     protected boolean isOpModeActive;
-
-    //Map and Positioning
-    protected OdometryMap map;
-    protected Pose robotPosition;
 
     //Manual Movement Functions
     protected void setDrive(double p) {
@@ -59,8 +57,10 @@ public abstract class Drivetrain {
         FR = hardwareMap.dcMotor.get("FR");
         BL = hardwareMap.dcMotor.get("BL");
         BR = hardwareMap.dcMotor.get("BR");
-        BR.setDirection(DcMotorSimple.Direction.REVERSE);
-        FR.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        FL.setDirection(DcMotorSimple.Direction.REVERSE);
+        //FR.setDirection(DcMotorSimple.Direction.REVERSE);
+        BL.setDirection(DcMotorSimple.Direction.REVERSE);
         setZeroBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
@@ -94,11 +94,6 @@ public abstract class Drivetrain {
         BR.setMode(r);
     }
 
-    protected void setSpecialMode(DcMotor.RunMode r) {
-        FL.setMode(r);
-        BL.setMode(r);
-        BR.setMode(r);
-    }
 
     public void setTelemetry(Telemetry telemetry) {
         this.telemetry = telemetry;

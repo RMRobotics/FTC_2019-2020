@@ -8,6 +8,12 @@ import org.firstinspires.ftc.teamcode.OOP.drivetrain.AutoDrivetrain;
 public class AutoBot extends Robot {
     private AutoDrivetrain drivetrain;
     private AutoSettings autoSettings;
+
+
+
+
+
+
     public AutoBot(HardwareMap hardwareMap){
         drivetrain = new AutoDrivetrain(hardwareMap,false);
         setupAttachments(hardwareMap);
@@ -57,6 +63,21 @@ public class AutoBot extends Robot {
         drivetrain.strafeDistance(distanceInches,power);
     }
 
+    /**
+     * THIS IS AN IMU-BASED MODE. Turn a specified number of degrees and then stop. (USES IMU)
+     * @param degreesToTurn - number of degrees to turn the robot.
+     * @param speed - speed at which to make the turn.
+     */
+    public void turnDegrees(int degreesToTurn, double speed){
+        drivetrain.turnDegrees(degreesToTurn,speed);
+    }
+
+
+
+    public void detectBlock(){
+
+    }
+
     //========================================TIME-BASED===================================\\
     /**
      * THIS IS A TIME-BASED MODE. Will move motors for a set amount of time.
@@ -96,15 +117,6 @@ public class AutoBot extends Robot {
     }
 
     /**
-     * THIS IS AN IMU-BASED MODE. Turn a specified number of degrees and then stop. (USES IMU)
-     * @param degreesToTurn - number of degrees to turn the robot.
-     * @param speed - speed at which to make the turn.
-     */
-    public void turnDegrees(int degreesToTurn, double speed){
-        drivetrain.turnDegrees(degreesToTurn,speed);
-    }
-
-    /**
      * Method used to add powers to the motors all at once.
      * @param fl - Front Left
      * @param fr - Front Right
@@ -138,6 +150,8 @@ public class AutoBot extends Robot {
     public void pivot() {
 
     }
+
+
 
     public void setDrivePath(){
         boolean optionChosen = false;
@@ -181,6 +195,7 @@ public class AutoBot extends Robot {
             }
         }while(!optionChosen);
         autoSettings = settings;
+        addTelemetry("Settings are complete.","Ready To Start");
     }
     /*
 
