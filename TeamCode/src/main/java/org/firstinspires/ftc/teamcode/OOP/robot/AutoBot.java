@@ -10,12 +10,8 @@ public class AutoBot extends Robot {
     private AutoSettings autoSettings;
 
 
-
-
-
-
     public AutoBot(HardwareMap hardwareMap){
-        drivetrain = new AutoDrivetrain(hardwareMap,false);
+        drivetrain = new AutoDrivetrain(hardwareMap);
         setupAttachments(hardwareMap);
     }
 

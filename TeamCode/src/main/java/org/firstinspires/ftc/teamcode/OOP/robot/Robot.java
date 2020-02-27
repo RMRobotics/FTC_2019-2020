@@ -6,9 +6,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public abstract class Robot {
-    public enum Mode{
-        TELEOP,AUTO
-    }
 
 
 

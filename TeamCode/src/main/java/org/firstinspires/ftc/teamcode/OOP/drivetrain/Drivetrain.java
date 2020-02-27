@@ -17,9 +17,7 @@ public abstract class Drivetrain {
     protected Telemetry telemetry;
 
     //Motors
-    //The hardwareMap is essentially the access point of the hardware on the robot
-    //Here the motors are accessed through the the hardwareMap by the name set in the FTC-app configs.
-    //These strings should MOST likely be constants since they should never change but... ok.
+    //Drivetrain Motors - Naming convention is FRONT(F)/BACK(B) followed by LEFT(L)/RIGHT(R)
     public DcMotor FL;
     public DcMotor FR;
     public DcMotor BL;
@@ -53,28 +51,18 @@ public abstract class Drivetrain {
     }
 
     protected void setupMotors(HardwareMap hardwareMap){
+        //The hardwareMap is essentially the access point of the hardware on the robot
+        //Here the motors are accessed through the the hardwareMap by the name set in the FTC-app configs.
         FL = hardwareMap.dcMotor.get("FL");
         FR = hardwareMap.dcMotor.get("FR");
         BL = hardwareMap.dcMotor.get("BL");
         BR = hardwareMap.dcMotor.get("BR");
 
         FL.setDirection(DcMotorSimple.Direction.REVERSE);
-        //FR.setDirection(DcMotorSimple.Direction.REVERSE);
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
         setZeroBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
-
-    //other methods
-    protected void holdUp(double num) {
-        timer.reset();
-        while (timer.seconds()<num){}
-    }
-
-    protected void moveDistance(double distanceInches, double power){
-
-    }
-
 
 
     public double getCPI() {
@@ -93,6 +81,7 @@ public abstract class Drivetrain {
         BL.setMode(r);
         BR.setMode(r);
     }
+
 
 
     public void setTelemetry(Telemetry telemetry) {

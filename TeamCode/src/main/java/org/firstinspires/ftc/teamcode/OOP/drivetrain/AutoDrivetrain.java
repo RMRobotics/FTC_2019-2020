@@ -21,7 +21,6 @@ public class AutoDrivetrain extends Drivetrain {
     private ElapsedTime timer;
     private final double HALF_SPEED = 0.5;
     private final double FULL_SPEED = 1;
-    private boolean odometryActive;
 
     //Sensors
     protected DcMotor odometryX;
@@ -30,7 +29,7 @@ public class AutoDrivetrain extends Drivetrain {
 
     //constructors
     public AutoDrivetrain(HardwareMap hardwareMap){
-        this.odometryActive = odometryActive;
+
         setupMotors(hardwareMap);
         //The rev instance variable is set to the rev orientation sensor from the hardwareMap
         rev = hardwareMap.get(BNO055IMU.class, "imu");
@@ -51,16 +50,8 @@ public class AutoDrivetrain extends Drivetrain {
     @Override
     protected void setupMotors(HardwareMap hardwareMap) {
         super.setupMotors(hardwareMap);
-        if(isOdometryActive()){
-            odometryLeft = hardwareMap.dcMotor.get("odometryLeft");
-            odometryRight = hardwareMap.dcMotor.get("odometryRight");
-            odometryX = hardwareMap.dcMotor.get("odometryX");
-            setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            setOdometryMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            setOdometryMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }else{
-            setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }
+        setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
 
     //maxJerk in power / second^2, maxAcceleration in power / second, maxVelocity in power, moveDistance in inches
@@ -257,31 +248,10 @@ public class AutoDrivetrain extends Drivetrain {
         }
     }
 
-    public boolean isOdometryActive() {
-        return odometryActive;
-    }
-
     public void acceleratedMoveStraight(double moveDistance, DriveDirection direction){
         acceleratedMoveStraight(MAX_JERK, MAX_ACCELERATION, MAX_VELOCITY, moveDistance, direction);
     }
 
-    protected void setOdometryMode(DcMotor.RunMode r){
-        if(odometryActive){
-            odometryLeft.setMode(r);
-            odometryRight.setMode(r);
-            odometryX.setMode(r);
-        }
-
-    }
-
-    protected void setOdometryZeroBehavior(DcMotor.ZeroPowerBehavior z){
-        if(odometryActive){
-            odometryLeft.setZeroPowerBehavior(z);
-            odometryRight.setZeroPowerBehavior(z);
-            odometryX.setZeroPowerBehavior(z);
-        }
-
-    }
 
 
     /**
@@ -469,18 +439,6 @@ public class AutoDrivetrain extends Drivetrain {
 
     public void setTimer(ElapsedTime timer) {
         this.timer = timer;
-    }
-
-    public DcMotor getOdometryLeft() {
-        return odometryLeft;
-    }
-
-    public DcMotor getOdometryRight() {
-        return odometryRight;
-    }
-
-    public DcMotor getOdometryX() {
-        return odometryX;
     }
 
 

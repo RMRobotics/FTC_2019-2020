@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.States;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.DanCV.Detection.MineralDetector;
 import org.firstinspires.ftc.teamcode.DanCV.UI.CVViewActivity;
 import org.firstinspires.ftc.teamcode.OOP.drivetrain.AutoDrivetrain;
+import org.firstinspires.ftc.teamcode.OOP.robot.AutoSettings;
 
 /**
  * Created by Daniel on 02/26/2020.
@@ -15,29 +16,24 @@ import org.firstinspires.ftc.teamcode.OOP.drivetrain.AutoDrivetrain;
 //Armistice Auto Super is ABSTRACT. This acts as a helper class that abstracts out common robot functions,
 //and allows for one to focus just on robot movement logic.
 public abstract class AutoSuper extends LinearOpMode {
-
-
     //==================================DEFINITION SECTION====================================\\
-    //All of the sensors and attachments needed during the Opmode is defined here. This includes motors,Servos and various sensors.
+    //All of the sensors and attachments needed during the Opmode is defined here. This includes
+    // motors,Servos and various sensors.
 
-    //Drivetrain Motors - Naming Scheme is FRONT/BACK followed by LEFT/RIGHT
+
     protected AutoDrivetrain drivetrain;
-
-    //CRSERVO - (Continuous Rotation) Servo - Can rotate a full 360 degrees
-    //SERVO - This servo can rotate only 180 degrees
-
 
     //Timer object is created so that the current time that has elapsed during a opMode can be referred to.
     protected ElapsedTime timer = new ElapsedTime();
 
     //Detector for OpenCV object detection
     protected MineralDetector detector;
+    private AutoSettings autoSettings;
 
-    //TODO THINK: what does CPI stand for, and what is the significance of the numbers used in its definition?
-    public static double CPI = (1120.0 * 0.66666)/(4.0 * Math.PI);
+
 
     //Pretty self explanatory - On initialize state
-    public void initialize (Boolean i) {
+    public void initialize () {
 
         drivetrain = new AutoDrivetrain(hardwareMap);
         //drivetrain.
@@ -49,116 +45,156 @@ public abstract class AutoSuper extends LinearOpMode {
 
     }
 
+
+
     //=================================UTILITY METHOD SECTION=====================================\\
 
     /**
-     * Sets all drivetrain motors to run at the same RunMode.
+     * Method used to add powers to the motors all at once.
+     * @param fl - Front Left
+     * @param fr - Front Right
+     * @param bl - Back Left
+     * @param br - Back Right
      */
-    protected void setMode(DcMotor.RunMode r) {
-        //drivetrain.
+    public void setPower(double fl, double fr, double bl, double br) {
+        drivetrain.setPowerAll(fl,fr,bl,br);
     }
 
     /**
-     * Sets all drivetrain motors' zero power behavior to the same value
+     * Sleep for a duration of time and then continue executing code.
+     * @param seconds
      */
-    protected void setZeroMode(DcMotor.ZeroPowerBehavior z) {
-
+    public void waitForDuration(double seconds){
+        drivetrain.wait(seconds);
     }
-
-    /**
-     * Sets all drivetrain motors' to move at the same given power
-     */
-    protected void setDrive(double p) {
-
-    }
-
-
-    /**
-     * Causes the robot to strafe by applying the same power value but negated to the back left and front right motors
-     */
-    protected void setStrafe(double pwr)
-    {
-
-    }
-
 
     /**
      * Easy way of setting robot telemetry
      */
-    protected void print(String message, double time)
+    protected void print(String caption, String data)
     {
-        telemetry.addData(message,"");
-        telemetry.update();
-        holdUp(time);
+        drivetrain.getTelemetry().addData(caption,data);
+    }
+
+    public void setTelemetry(Telemetry t){
+        drivetrain.setTelemetry(t);
+    }
+    //========================================ENCODER-BASED===================================\\
+    /**
+     * Move a specified number of inches and then stop.
+     * @param distanceInches - Distance in inches to move.
+     * @param power - speed at which to move.
+     */
+    public void moveDistance(double distanceInches, double power){
+        drivetrain.moveDistance(distanceInches,power);
     }
 
     /**
-     * Pause for a specificed amount of time
-     * NOTE: This does not pause any motors
+     * Strafe for a specified number of inches and then stop.
+     * @param distanceInches - Number of inches through which to strafe.
+     * @param power - speed at which to strafe .
      */
-    protected void holdUp(double num)
-    {
-        /*
-        Resetting the timer mid opMode seems like it could be problematic,specifically
-        causing the robot to do some action longer than expected. For example, imagine a while loop in the opmode,
-        where the robot is to move forward till 5 seconds have elapsed. If holdup is called during this while loop,
-        and given a value of 10 seconds, It will reset the timer object, wait (and move) for 10 seconds, before
-        immediately breaking out of the while loop at the end of the current loop. Since the timer would be at 10,
-        after holdup was done, and the while loop uses the timer object to track time elapsed.
-        */
-        timer.reset();
+    public void strafeDistance(double distanceInches, double power){
+        drivetrain.strafeDistance(distanceInches,power);
+    }
 
-        while (timer.seconds()<num)
-        {}
+    /**
+     * THIS IS AN IMU-BASED MODE. Turn a specified number of degrees and then stop. (USES IMU)
+     * @param degreesToTurn - number of degrees to turn the robot.
+     * @param speed - speed at which to make the turn.
+     */
+    public void turnDegrees(int degreesToTurn, double speed){
+        drivetrain.turnDegrees(degreesToTurn,speed);
     }
 
 
-/*
-    protected void moveEncoders(double distanceInches, double power){
-        // Reset encoders
-        setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        //Get current position of each motor
-        int currentPos1 = FL.getCurrentPosition();
-        int currentPos2 = FR.getCurrentPosition();
-        int currentPos3 = BL.getCurrentPosition();
-        int currentPos4 = BR.getCurrentPosition();
-        //distanceTics is num of tics it needs to travel
-        int distanceTics = (int)(distanceInches * CPI);
-
-        // Prepare to drive to target position
-        setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // Set target position and speed
-        FL.setTargetPosition(currentPos1 + distanceTics);
-        FR.setTargetPosition(currentPos2 + distanceTics);
-        BL.setTargetPosition(currentPos3 + distanceTics);
-        BR.setTargetPosition(currentPos4 + distanceTics);
-
-        FL.setPower(power);
-        FR.setPower(power);
-        BL.setPower(power);
-        BR.setPower(power);
-
-        // Loop while we approach the target.  Display position as we go
-        while(FR.isBusy() && FL.isBusy() && BL.isBusy() && BR.isBusy()) {
-            telemetry.addData("FL Encoder", FL.getCurrentPosition());
-            telemetry.addData("BL Encoder", BL.getCurrentPosition());
-            telemetry.addData("FR Encoder", FR.getCurrentPosition());
-            telemetry.addData("BR Encoder", BR.getCurrentPosition());
-            telemetry.update();
-        }
-
-        // We are done, turn motors off and switch back to normal driving mode.
-        FL.setPower(0);
-        FR.setPower(0);
-        BL.setPower(0);
-        BR.setPower(0);
-
-        //TODO Never set back to normal driving mode
+/**
+ * ======================================TIME-BASED METHODS=======================================
+ */
+    /**
+     * Will move motors for a set amount of time.
+     * @param seconds - number of seconds to run the motors at FULL SPEED for.
+     * @param isForward - Specifies whether direction of motion is Forward or Backward(REPLACE WITH ENUMERATION)
+     */
+    public void moveForDuration(double seconds, boolean isForward){
+        //340 rpm gear down by 2 max speed per minute. 160 rpm/60
+        //34 inches/second
+        drivetrain.moveForDuration(seconds,isForward);
     }
 
-*/
+    /**
+     * Will move motors for a set amount of time to achieve a certain distance.
+     * @param inches - number of inches to move
+     * @param isForward - Specifies whether direction of motion is Forward or Backward(REPLACE WITH ENUMERATION)
+     */
+    public void moveForDistance(double inches,boolean isForward){
+        drivetrain.moveDistanceByInch(inches,isForward);
+    }
 
+    /**
+     * Will move motors for a set time to achieve a certain distance.
+     * @param inches
+     */
+    public void strafeForDistance(double inches,boolean isForward){
+        drivetrain.strafeDistanceByInch(inches,isForward);
+    }
 
+    /**
+     * Will move motors for a set time to strafe a certain distance.
+     * @param seconds - number of seconds to strafe for
+     * @param isForward - Specifies whether direction of motion is Forward or Backward(REPLACE WITH ENUMERATION)
+     */
+    public void strafeForDuration(double seconds,boolean isForward){
+        drivetrain.strafeForDuration(seconds,isForward);
+    }
+
+    /**
+     * ================================UNFINISHED METHODS SECTION===================================
+     */
+
+    public void setDrivePath(){
+        boolean optionChosen = false;
+        AutoSettings settings = new AutoSettings();
+        print("Settings","");
+        print("Q1: Blue or Red","Press A/B");
+        do {
+            if(gamepad1.a || gamepad2.b){
+                if(gamepad1.a){
+                    settings.setTeamColor(AutoSettings.Settings.BLUE);
+                }else if(gamepad1.b){
+                    settings.setTeamColor(AutoSettings.Settings.RED);
+                }
+                optionChosen = true;
+            }
+        }while(!optionChosen);
+        optionChosen = false;
+        print("Q2: Foundation or Skystone", "Press A/B");
+        do {
+            if(gamepad1.a || gamepad2.b){
+                if(gamepad1.a){
+                    settings.setFieldSide(AutoSettings.Settings.FOUNDATION);
+                }else if(gamepad1.b){
+                    settings.setFieldSide(AutoSettings.Settings.SKYSTONE);
+                }
+                optionChosen = true;
+            }
+        }while(!optionChosen);
+        optionChosen = false;
+        print("Q3: Additional Run Options","Press the corresponding button");
+        print("\tA:","Simple");
+        print("\tB:","Advanced");
+        do {
+            if(gamepad1.a || gamepad2.b){
+                if(gamepad1.a){
+                    settings.setComplexity(AutoSettings.Settings.SIMPLE);
+                }else if(gamepad1.b){
+                    settings.setComplexity(AutoSettings.Settings.ADVANCED);
+                }
+                optionChosen = true;
+            }
+        }while(!optionChosen);
+        autoSettings = settings;
+        print("Settings are complete.","Ready To Start");
+    }
 }
