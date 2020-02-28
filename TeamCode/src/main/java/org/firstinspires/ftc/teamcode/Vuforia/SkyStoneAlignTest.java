@@ -134,7 +134,7 @@ public class SkyStoneAlignTest extends AutoSuper {
                                 telemetry.addData("\nZ-Rotation: ", rZ);
 
                                 if(tX > .25){
-                                    drivePower = -maxDrivePower + (1/tX);
+                                    drivePower = -maxDrivePower + (1/(.5 * tX));
                                     if(drivePower > -.2){
                                         drivePower = -.2;
                                     }
@@ -143,7 +143,7 @@ public class SkyStoneAlignTest extends AutoSuper {
                                     drivePower = 0;
                                 }
                                 else{
-                                    drivePower = maxDrivePower - (1/tX);
+                                    drivePower = maxDrivePower - (1/(.5* tX));
                                     if(drivePower < .2){
                                         drivePower = .2;
                                     }
