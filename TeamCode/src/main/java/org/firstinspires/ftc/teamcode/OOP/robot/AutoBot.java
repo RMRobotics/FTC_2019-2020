@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OOP.robot;
 
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -10,9 +11,9 @@ public class AutoBot extends Robot {
     private AutoSettings autoSettings;
 
 
-    public AutoBot(HardwareMap hardwareMap){
+    public AutoBot(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2){
         drivetrain = new AutoDrivetrain(hardwareMap);
-        setupAttachments(hardwareMap);
+        setupAttachments(hardwareMap,gamepad1,gamepad2);
     }
 
     /**

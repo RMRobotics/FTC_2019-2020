@@ -43,7 +43,7 @@ public abstract class AutoSuper extends LinearOpMode {
         detector.init(hardwareMap.appContext, CVViewActivity.getInstance(),1);
         //Always save activation(Turning the camera on and starting the detection) for the beginning of the opmode
         //detector.activate();
-
+        d
     }
 
 

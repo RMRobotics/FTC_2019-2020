@@ -20,13 +20,14 @@ public abstract class Robot {
 
 
 
-    public void setupAttachments(HardwareMap hardwareMap){
+    public void setupAttachments(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2){
         //lift = hardwareMap.dcMotor.get("lift");
         //intakeLeft = hardwareMap.dcMotor.get("intakeLeft");
         //intakeRight = hardwareMap.dcMotor.get("intakeRight");
         //intakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        swivel = hardwareMap.servo.get("swivel");
-
+        //swivel = hardwareMap.servo.get("swivel");
+        this.gamepad1 = gamepad1;
+        this.gamepad2 = gamepad2;
         //pivotLeft = hardwareMap.servo.get("pivotLeft");
         //pivotRight = hardwareMap.servo.get("pivotRight");
         // ramp = hardwareMap.servo.get("ramp");

@@ -22,7 +22,11 @@ public class AutoDriveTestRed extends LinearOpMode {
 
     public void initialize(){
 
-        robot = new AutoBot(hardwareMap);
+        robot = new AutoBot(hardwareMap,gamepad1,gamepad2);
         robot.setTelemetry(telemetry);
+        telemetry.addData("ahhhh","ahhhhhhhhh");
+        telemetry.update();
+
+        robot.setDrivePath();
     }
 }

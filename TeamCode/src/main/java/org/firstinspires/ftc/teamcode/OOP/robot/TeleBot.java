@@ -24,12 +24,12 @@ public class TeleBot extends Robot {
         this.gamepad1 = gamepad1;
         this.gamepad2 = gamepad2;
 
-        setupAttachments(hardwareMap);
+        setupAttachments(hardwareMap,gamepad1,gamepad2);
     }
 
     @Override
-    public void setupAttachments(HardwareMap hardwareMap) {
-        super.setupAttachments(hardwareMap);
+    public void setupAttachments(HardwareMap hardwareMap,Gamepad gamepad1, Gamepad gaamepad2) {
+        super.setupAttachments(hardwareMap,gamepad1,gamepad2);
         lift = hardwareMap.dcMotor.get("lift");
         lift.setDirection(DcMotorSimple.Direction.REVERSE);
         pivotLeft = hardwareMap.crservo.get("pivotLeft");
