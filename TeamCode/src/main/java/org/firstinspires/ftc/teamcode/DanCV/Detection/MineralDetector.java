@@ -114,13 +114,13 @@ public class MineralDetector extends Detector {
                 box = tryBoxFromBuffer(box);
                 Imgproc.rectangle(mFrame,new Point(box.x,box.y),new Point(box.width,box.height), new Scalar(255,255,255),2);
                 String message = getRelPosition(mFrame,box).name();
-                Imgproc.putText(mFrame,message,box.tl(),Core.FONT_HERSHEY_SIMPLEX,1,new Scalar(255,255,255),2,Core.LINE_AA);
-                Imgproc.putText(mFrame,box.width + " x " + box.height,box.br(),Core.FONT_HERSHEY_SIMPLEX,1,new Scalar(255,255,255),2,Core.LINE_AA);
+                //Imgproc.putText(mFrame,message,box.tl(),Core.FONT_HERSHEY_SIMPLEX,1,new Scalar(255,255,255),2,Core.LINE_AA);
+                //Imgproc.putText(mFrame,box.width + " x " + box.height,box.br(),Core.FONT_HERSHEY_SIMPLEX,1,new Scalar(255,255,255),2,Core.LINE_AA);
 
 
                 Imgproc.rectangle(mOriginalFrame,new Point(box.x,box.y),new Point(box.width,box.height), new Scalar(0,255,0),2);
-                Imgproc.putText(mOriginalFrame,message,box.tl(),Core.FONT_HERSHEY_SIMPLEX,1,new Scalar(0,255,0),2,Core.LINE_AA);
-                Imgproc.putText(mOriginalFrame,box.width + " x " + box.height,box.br(),Core.FONT_HERSHEY_SIMPLEX,1,new Scalar(0,255,0),2,Core.LINE_AA);
+                //Imgproc.putText(mOriginalFrame,message,box.tl(),Core.FONT_HERSHEY_SIMPLEX,1,new Scalar(0,255,0),2,Core.LINE_AA);
+                //Imgproc.putText(mOriginalFrame,box.width + " x " + box.height,box.br(),Core.FONT_HERSHEY_SIMPLEX,1,new Scalar(0,255,0),2,Core.LINE_AA);
 
 
                 buffer = box;

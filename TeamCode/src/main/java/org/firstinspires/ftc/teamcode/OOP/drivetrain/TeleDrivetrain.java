@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class TeleDrivetrain extends Drivetrain {
 
 
-
     public TeleDrivetrain(HardwareMap hardwareMap){
         FL = hardwareMap.dcMotor.get("FL");
         FR = hardwareMap.dcMotor.get("FR");

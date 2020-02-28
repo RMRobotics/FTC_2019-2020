@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.DanCV.Detection.MineralDetector;
+import org.firstinspires.ftc.teamcode.DanCV.Enums.RelativePosition;
 import org.firstinspires.ftc.teamcode.DanCV.UI.CVViewActivity;
 import org.firstinspires.ftc.teamcode.OOP.drivetrain.AutoDrivetrain;
 import org.firstinspires.ftc.teamcode.OOP.robot.AutoSettings;
@@ -60,6 +61,14 @@ public abstract class AutoSuper extends LinearOpMode {
         drivetrain.setPowerAll(fl,fr,bl,br);
     }
 
+    public void setPowerAll(double power){
+        drivetrain.setPowerAll(power,power,power,power);
+    }
+
+    public void setStrafe(double power){
+        drivetrain.setStrafe(power);
+    }
+
     /**
      * Sleep for a duration of time and then continue executing code.
      * @param seconds
@@ -109,6 +118,36 @@ public abstract class AutoSuper extends LinearOpMode {
 
 
 
+    public void detectBlock(){
+        detector.activate();
+        while(!detector.isReady()){ }
+        while (!detector.isCentered()) {
+            //This method returns a value from the Relative Position enum - see Enum Package folder in DanCV for more info
+            //Can yield LEFT,RIGHT,CENTER, or UNKNOWN (not visible)
+            print("Detected Position", detector.getRelativePos().name());
+            //Yields whether object is centered or not
+            print("Centered? ", "" +detector.isCentered());
+            //Whether its visible (may have problems, but should work)
+            print("Visible", "" +detector.isVisible());
+            if(detector.getRelativePos() == RelativePosition.RIGHT){
+                setPowerAll(0.3);
+            }else if(detector.getRelativePos() == RelativePosition.UNKNOWN){
+                strafeForDistance(3,true);
+            }else{
+                setPowerAll(-0.3);
+            }
+        }
+        setPowerAll(0);
+        grabBlock();
+    }
+
+
+    private void grabBlock(){
+        strafeDistance(10,0.7);
+        //LIFT MECHANISM TO PICKUP BLOCK
+    }
+
+
 /**
  * ======================================TIME-BASED METHODS=======================================
  */
@@ -136,17 +175,17 @@ public abstract class AutoSuper extends LinearOpMode {
      * Will move motors for a set time to achieve a certain distance.
      * @param inches
      */
-    public void strafeForDistance(double inches,boolean isForward){
-        drivetrain.strafeDistanceByInch(inches,isForward);
+    public void strafeForDistance(double inches,boolean isLeft){
+        drivetrain.strafeDistanceByInch(inches,isLeft);
     }
 
     /**
      * Will move motors for a set time to strafe a certain distance.
      * @param seconds - number of seconds to strafe for
-     * @param isForward - Specifies whether direction of motion is Forward or Backward(REPLACE WITH ENUMERATION)
+     * @param isLeft - Specifies whether direction of motion is Forward or Backward(REPLACE WITH ENUMERATION)
      */
-    public void strafeForDuration(double seconds,boolean isForward){
-        drivetrain.strafeForDuration(seconds,isForward);
+    public void strafeForDuration(double seconds,boolean isLeft){
+        drivetrain.strafeForDuration(seconds,isLeft);
     }
 
     /**

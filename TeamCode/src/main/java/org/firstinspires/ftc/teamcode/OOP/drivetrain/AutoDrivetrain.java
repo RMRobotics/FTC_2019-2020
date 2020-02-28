@@ -22,10 +22,6 @@ public class AutoDrivetrain extends Drivetrain {
     private final double HALF_SPEED = 0.5;
     private final double FULL_SPEED = 1;
 
-    //Sensors
-    protected DcMotor odometryX;
-    protected DcMotor odometryLeft;
-    protected DcMotor odometryRight;
 
     //constructors
     public AutoDrivetrain(HardwareMap hardwareMap){
@@ -90,11 +86,11 @@ public class AutoDrivetrain extends Drivetrain {
         }
 
         //reset encoders to zero
-        setOdometryMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //get to half velocity
         while(! reachedHalfMaxVelocity && ! reachedHalfTicks){
-            ticks = odometryRight.getCurrentPosition();
+            ticks = FL.getCurrentPosition();
 
             if((ticks - previousTicks) > 1){
                 dTicks = ticks - previousTicks;
@@ -131,7 +127,7 @@ public class AutoDrivetrain extends Drivetrain {
 
         //get to half the distance
         while(! reachedHalfTicks){
-            ticks = odometryRight.getCurrentPosition();
+            ticks = FL.getCurrentPosition();
 
             if((ticks - previousTicks) > 1){
                 dTicks = ticks - previousTicks;
@@ -144,7 +140,7 @@ public class AutoDrivetrain extends Drivetrain {
 
             if(! reachedMaxVelocity){
                 if(reachedMaxAcceleration){
-                    if(odometryRight.getCurrentPosition() <= halfVelocityTicks + ticksAtMaxAcceleration){
+                    if(FL.getCurrentPosition() <= halfVelocityTicks + ticksAtMaxAcceleration){
                         velocity += acceleration * dTicks;
                         setDrive(velocity);
                     }
@@ -175,7 +171,7 @@ public class AutoDrivetrain extends Drivetrain {
 
         while(! reachedHalfMaxVelocity && ! reachedThreeQuarterTickDistance){
 
-            ticks = odometryRight.getCurrentPosition();
+            ticks = FL.getCurrentPosition();
 
             if((ticks - previousTicks) > 1){
                 dTicks = ticks - previousTicks;
@@ -211,7 +207,7 @@ public class AutoDrivetrain extends Drivetrain {
         halfVelocityTicks = ticks;
 
         while(reachedFullTicks){
-            ticks = odometryRight.getCurrentPosition();
+            ticks = FL.getCurrentPosition();
 
             if((ticks - previousTicks) > 1){
                 dTicks = ticks - previousTicks;
@@ -224,7 +220,7 @@ public class AutoDrivetrain extends Drivetrain {
 
             if(! reachedMaxVelocity){
                 if(reachedMaxAcceleration){
-                    if(odometryRight.getCurrentPosition() <= halfVelocityTicks + ticksAtMaxAcceleration){
+                    if(FL.getCurrentPosition() <= halfVelocityTicks + ticksAtMaxAcceleration){
                         velocity -= acceleration * dTicks;
                         setDrive(velocity);
                     }

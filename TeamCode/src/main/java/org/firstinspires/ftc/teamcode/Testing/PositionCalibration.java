@@ -91,7 +91,7 @@ public class PositionCalibration extends LinearOpMode {
 
 
     public void initialize(){
-        drivetrain = new AutoDrivetrain(hardwareMap,true);
+        drivetrain = new AutoDrivetrain(hardwareMap);
         //odometryX = drivetrain.getOdometryX();
         //odometryRight = drivetrain.getOdometryRight();
         //odometryLeft = drivetrain.getOdometryLeft();
