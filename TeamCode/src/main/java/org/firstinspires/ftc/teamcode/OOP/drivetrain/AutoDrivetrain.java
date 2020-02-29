@@ -251,92 +251,30 @@ public class AutoDrivetrain extends Drivetrain {
      *  *Method borrowed from last year*
      * @param distanceInches
      */
-    public void moveDistance(double distanceInches, double power){
-         //Stop and reset encoder
-        int distanceTics = (int)(distanceInches * CPI);
-        int currentPos1 = FL.getCurrentPosition();
-        //int currentPos2 = FR.getCurrentPosition();
-        int currentPos3 = BL.getCurrentPosition();
-        int currentPos4 = BR.getCurrentPosition();
-        int startPos1 = currentPos1;
-        //int startPos2 = currentPos2;
-        int startPos3 = currentPos3;
-        int startPos4 = currentPos4;
-
-
-        int targetPos1 = currentPos1+distanceTics;
-        //int targetPos2 = currentPos2+distanceTics;
-        int targetPos3 = currentPos3+distanceTics;
-        int targetPos4 = currentPos4+distanceTics;
-
-        setTargetPosition(targetPos1,targetPos3,targetPos4);
-
-        setPowerAll(power,power,power,power);
-
-        // Loop while we approach the target.  Display position as we go
-        while(FL.isBusy() && BL.isBusy() && BR.isBusy()) {
-            telemetry.addData("FL Encoder", FL.getCurrentPosition());
-            telemetry.addData("BL Encoder", BL.getCurrentPosition());
-            telemetry.addData("BR Encoder", BR.getCurrentPosition());
-
-            telemetry.addData("FL Start", startPos1 + ", Target: " +targetPos1);
-            telemetry.addData("BL Start", startPos3+ ", Target: " +targetPos3);
-            telemetry.addData("BR Start", startPos4+ ", Target: " +targetPos4);
-
-            telemetry.addData("Power FR - ", FR.getPower());
-            telemetry.addData("Power FL - ", FL.getPower());
-            telemetry.addData("Power BL - ", BL.getPower());
-            telemetry.addData("Power BR - ", BR.getPower());
-            telemetry.update();
-        }
-
-        // We are done, turn motors off and switch back to normal driving mode.
-        FL.setPower(0);
-        FR.setPower(0);
-        BL.setPower(0);
-        BR.setPower(0);
-
-
-
-
-    }
-
-
-    public void encoderDrive(double speed, double leftInches, double rightInches, double timeout) {
-
+    public void moveDistance(double distanceInches, double power,int timeout){
         int flTgt;
         int frTgt;
         int blTgt;
         int brTgt;
 
-
-        // check that the opmode is still active
-        if (isOpModeActive()) {
+        if(opModeIsActive){
+            //Stop and reset encoder
 
             // Determines next target position, and sends to motor controller
-            flTgt = FL.getCurrentPosition() + (int) (leftInches * CPI);
-            frTgt = FR.getCurrentPosition() + (int) (rightInches * CPI);
-            blTgt = FL.getCurrentPosition() + (int) (leftInches * CPI);
-            brTgt = FL.getCurrentPosition() + (int) (rightInches * CPI);
+            flTgt = FL.getCurrentPosition() + (int) (distanceInches * CPI);
+            frTgt = FR.getCurrentPosition() + (int) (distanceInches * CPI);
+            blTgt = FL.getCurrentPosition() + (int) (distanceInches * CPI);
+            brTgt = FL.getCurrentPosition() + (int) (distanceInches * CPI);
 
-            FL.setTargetPosition(flTgt);
-            FR.setTargetPosition(frTgt);
-            BL.setTargetPosition(blTgt);
-            BR.setTargetPosition(brTgt);
+            setTargetPosition(flTgt,frTgt,blTgt,brTgt);
 
-            // Turn On RUN_TO_POSITION
-            FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             timer.reset();
-            FL.setPower(speed);
-            FR.setPower(speed);
-            BL.setPower(speed);
-            BR.setPower(speed);
+            setPowerAll(power,power,power,power);
 
-            while (isOpModeActive() && (timer.seconds() < timeout) && (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
+            // Loop while we approach the target.  Display position as we go
+            while (opModeIsActive && (timer.seconds() < timeout) && (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
 
                 telemetry.addData("Path1",  "Running to %7d :%7d :%7d :%7d", flTgt,  frTgt, blTgt, brTgt);
                 telemetry.addData("Path2",  "Running at %7d :%7d :%7d :%7d",
@@ -347,13 +285,20 @@ public class AutoDrivetrain extends Drivetrain {
                 telemetry.update();
             }
 
+            // We are done, turn motors off and switch back to normal driving mode.
             FL.setPower(0);
             FR.setPower(0);
             BL.setPower(0);
             BR.setPower(0);
+
+
         }
 
+
+
     }
+
+
 
     /**
      *
@@ -379,40 +324,49 @@ public class AutoDrivetrain extends Drivetrain {
      * A positive value for strafe, results in a strafe to the robot's right, negative for strafing left
      * @param distanceInches
      */
-    public void strafeDistance(double distanceInches, double power){
+    public void strafeDistance(double distanceInches, double power,int timeout){
 
-        setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //Stop and reset encoder
-        int distanceTics = (int)(distanceInches * CPI);
-        int currentPos1 = FL.getCurrentPosition();
-        int currentPos2 = FR.getCurrentPosition();
-        int currentPos3 = BL.getCurrentPosition();
-        int currentPos4 = BR.getCurrentPosition();
+        int flTgt;
+        int frTgt;
+        int blTgt;
+        int brTgt;
 
-        setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
-        int targetPos1 = currentPos1+distanceTics;
-        int targetPos2 = currentPos2-distanceTics;
-        int targetPos4 = currentPos4+distanceTics;
-        int targetPos3 = currentPos3-distanceTics;
+        if(opModeIsActive){
+            //Stop and reset encoder
 
-        //setTargetPosition(targetPos1,targetPos2,targetPos3,targetPos4); -THIS WILL BREAK THE CODE
+            // Determines next target position, and sends to motor controller
+            flTgt = FL.getCurrentPosition() + (int) (distanceInches * CPI);
+            frTgt = FR.getCurrentPosition() + (int) (distanceInches * CPI);
+            blTgt = FL.getCurrentPosition() + (int) (distanceInches * CPI);
+            brTgt = FL.getCurrentPosition() + (int) (distanceInches * CPI);
 
-        setPowerAll(power,-power,-power,power);
+            setTargetPosition(flTgt,frTgt,blTgt,brTgt);
 
-        // Loop while we approach the target.  Display position as we go
-        while(FL.isBusy() && BL.isBusy() && BR.isBusy()) {
-            telemetry.addData("FL Encoder", FL.getCurrentPosition());
-            telemetry.addData("BL Encoder", BL.getCurrentPosition());
-            telemetry.addData("FR Encoder", FR.getCurrentPosition());
-            telemetry.addData("BR Encoder", BR.getCurrentPosition());
-            telemetry.update();
+            setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            timer.reset();
+            setPowerAll(power,-power,-power,power);
+
+            // Loop while we approach the target.  Display position as we go
+            while (opModeIsActive && (timer.seconds() < timeout) && (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
+
+                telemetry.addData("Path1",  "Running to %7d :%7d :%7d :%7d", flTgt,  frTgt, blTgt, brTgt);
+                telemetry.addData("Path2",  "Running at %7d :%7d :%7d :%7d",
+                        FL.getCurrentPosition(),
+                        FR.getCurrentPosition(),
+                        BL.getCurrentPosition(),
+                        BR.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // We are done, turn motors off and switch back to normal driving mode.
+            FL.setPower(0);
+            FR.setPower(0);
+            BL.setPower(0);
+            BR.setPower(0);
+
+
         }
-
-        // We are done, turn motors off and switch back to normal driving mode.
-        FL.setPower(0);
-        FR.setPower(0);
-        BL.setPower(0);
-        BR.setPower(0);
 
 
     }
@@ -477,9 +431,9 @@ public class AutoDrivetrain extends Drivetrain {
     }
 
 
-    public void setTargetPosition(int fl, int bl, int br){
+    public void setTargetPosition(int fl,int fr, int bl, int br){
         FL.setTargetPosition(fl);
-        //FR.setTargetPosition(fr);
+        FR.setTargetPosition(fr);
         BL.setTargetPosition(bl);
         BR.setTargetPosition(br);
     }

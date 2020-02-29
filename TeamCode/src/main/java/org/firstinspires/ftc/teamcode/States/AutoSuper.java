@@ -97,7 +97,7 @@ public abstract class AutoSuper extends LinearOpMode {
      * @param power - speed at which to move.
      */
     public void moveDistance(double distanceInches, double power){
-        drivetrain.moveDistance(distanceInches,power);
+        drivetrain.moveDistance(distanceInches,power,10);
     }
 
     /**
@@ -106,7 +106,7 @@ public abstract class AutoSuper extends LinearOpMode {
      * @param power - speed at which to strafe .
      */
     public void strafeDistance(double distanceInches, double power){
-        drivetrain.strafeDistance(distanceInches,power);
+        drivetrain.strafeDistance(distanceInches,power,10);
     }
 
     /**

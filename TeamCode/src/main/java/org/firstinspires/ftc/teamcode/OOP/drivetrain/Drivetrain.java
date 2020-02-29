@@ -31,7 +31,7 @@ public abstract class Drivetrain {
 
     //Other variables
     protected ElapsedTime timer;
-    protected boolean isOpModeActive;
+    protected boolean opModeIsActive;
 
     //Manual Movement Functions
     protected void setDrive(double p) {
@@ -59,14 +59,35 @@ public abstract class Drivetrain {
     protected void setupMotors(HardwareMap hardwareMap){
         //The hardwareMap is essentially the access point of the hardware on the robot
         //Here the motors are accessed through the the hardwareMap by the name set in the FTC-app configs.
-        FL = hardwareMap.dcMotor.get("FL");
-        FR = hardwareMap.dcMotor.get("FR");
-        BL = hardwareMap.dcMotor.get("BL");
-        BR = hardwareMap.dcMotor.get("BR");
+        FL = hardwareMap.get(DcMotor.class, "FL");
+        FR = hardwareMap.get(DcMotor.class, "FR");
+        BL = hardwareMap.get(DcMotor.class, "BL");
+        BR = hardwareMap.get(DcMotor.class, "BR");
 
-        FL.setDirection(DcMotorSimple.Direction.REVERSE);
-        BL.setDirection(DcMotorSimple.Direction.REVERSE);
-        setZeroBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FL.setDirection(DcMotor.Direction.FORWARD);
+        BL.setDirection(DcMotor.Direction.FORWARD);
+        FR.setDirection(DcMotor.Direction.REVERSE);
+        BR.setDirection(DcMotor.Direction.REVERSE);
+
+        //  foundation = hardwareMap.get(Servo.class, "foundation");
+        //  parking = hardwareMap.get(CRServo.class, "parking");
+
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+
+        telemetry.addData("Status", "Resetting Encoders");
+        telemetry.update();
+
+
+        setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        telemetry.addData("Path", "Starting at %7d :%7d :%7d :%7d",
+                FL.getCurrentPosition(),
+                FR.getCurrentPosition(),
+                BL.getCurrentPosition(),
+                BR.getCurrentPosition());
+        telemetry.update();
 
     }
 
@@ -97,11 +118,11 @@ public abstract class Drivetrain {
         return telemetry;
     }
 
-    public boolean isOpModeActive() {
-        return isOpModeActive;
+    public boolean isOpModeIsActive() {
+        return opModeIsActive;
     }
 
-    public void setOpModeActive(boolean opModeActive) {
-        isOpModeActive = opModeActive;
+    public void setOpModeIsActive(boolean opModeIsActive) {
+        this.opModeIsActive = opModeIsActive;
     }
 }
