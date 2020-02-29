@@ -68,7 +68,7 @@ public class SkyStoneAlignTest extends AutoSuper {
 
         //set location for the phone
         OpenGLMatrix phoneOnRobot = OpenGLMatrix
-                .translation(0, robotSize / 2, 0)
+                .translation(70, robotSize / 2, 0)
                 .multiplied(Orientation.getRotationMatrix(
                         AxesReference.EXTRINSIC, AxesOrder.XYZ,
                         AngleUnit.DEGREES, 0, -90, 0));
