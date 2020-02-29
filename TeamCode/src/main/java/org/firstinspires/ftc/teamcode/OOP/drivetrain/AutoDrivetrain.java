@@ -77,20 +77,17 @@ public class AutoDrivetrain extends Drivetrain {
         if(direction == DriveDirection.FORWARD){
             directionMultiplier = 1;
         }
-        else if(direction == DriveDirection.BACKWARD){
+        else{
             directionMultiplier = -1;
         }
-        else{
-            //error
-            System.exit(0);
-        }
+
 
         //reset encoders to zero
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //get to half velocity
         while(! reachedHalfMaxVelocity && ! reachedHalfTicks){
-            ticks = FL.getCurrentPosition();
+            ticks = Math.abs(FL.getCurrentPosition());
 
             if((ticks - previousTicks) > 1){
                 dTicks = ticks - previousTicks;
@@ -112,7 +109,7 @@ public class AutoDrivetrain extends Drivetrain {
             }
 
             velocity += acceleration * dTicks;
-            setDrive(velocity);
+            setDrive(directionMultiplier * velocity);
 
             if(velocity >= halfMaxVelocity){
                 reachedHalfMaxVelocity = true;
@@ -127,7 +124,7 @@ public class AutoDrivetrain extends Drivetrain {
 
         //get to half the distance
         while(! reachedHalfTicks){
-            ticks = FL.getCurrentPosition();
+            ticks = Math.abs(FL.getCurrentPosition());
 
             if((ticks - previousTicks) > 1){
                 dTicks = ticks - previousTicks;
@@ -140,9 +137,9 @@ public class AutoDrivetrain extends Drivetrain {
 
             if(! reachedMaxVelocity){
                 if(reachedMaxAcceleration){
-                    if(FL.getCurrentPosition() <= halfVelocityTicks + ticksAtMaxAcceleration){
+                    if(Math.abs(FL.getCurrentPosition()) <= halfVelocityTicks + ticksAtMaxAcceleration){
                         velocity += acceleration * dTicks;
-                        setDrive(velocity);
+                        setDrive(directionMultiplier * velocity);
                     }
                     else{
                         reachedMaxAcceleration = false;
@@ -171,7 +168,7 @@ public class AutoDrivetrain extends Drivetrain {
 
         while(! reachedHalfMaxVelocity && ! reachedThreeQuarterTickDistance){
 
-            ticks = FL.getCurrentPosition();
+            ticks = Math.abs(FL.getCurrentPosition());
 
             if((ticks - previousTicks) > 1){
                 dTicks = ticks - previousTicks;
@@ -193,7 +190,7 @@ public class AutoDrivetrain extends Drivetrain {
             }
 
             velocity -= acceleration * dTicks;
-            setDrive(velocity);
+            setDrive(directionMultiplier * velocity);
 
             if(velocity <= halfMaxVelocity){
                 reachedHalfMaxVelocity = true;
@@ -207,7 +204,7 @@ public class AutoDrivetrain extends Drivetrain {
         halfVelocityTicks = ticks;
 
         while(reachedFullTicks){
-            ticks = FL.getCurrentPosition();
+            ticks = Math.abs(FL.getCurrentPosition());
 
             if((ticks - previousTicks) > 1){
                 dTicks = ticks - previousTicks;
@@ -220,9 +217,9 @@ public class AutoDrivetrain extends Drivetrain {
 
             if(! reachedMaxVelocity){
                 if(reachedMaxAcceleration){
-                    if(FL.getCurrentPosition() <= halfVelocityTicks + ticksAtMaxAcceleration){
+                    if(Math.abs(FL.getCurrentPosition()) <= halfVelocityTicks + ticksAtMaxAcceleration){
                         velocity -= acceleration * dTicks;
-                        setDrive(velocity);
+                        setDrive(directionMultiplier * velocity);
                     }
                     else{
                         reachedMaxAcceleration = false;
