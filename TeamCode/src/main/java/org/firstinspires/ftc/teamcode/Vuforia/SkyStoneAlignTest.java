@@ -138,6 +138,9 @@ public class SkyStoneAlignTest extends AutoSuper {
                                     if(drivePower > -.2){
                                         drivePower = -.2;
                                     }
+                                    if(drivePower < -maxDrivePower){
+                                        drivePower = -maxDrivePower;
+                                    }
                                 }
                                 else if (-.25 <= tX && tX <= .25){
                                     drivePower = 0;
@@ -146,6 +149,9 @@ public class SkyStoneAlignTest extends AutoSuper {
                                     drivePower = maxDrivePower - (1/(.5* tX));
                                     if(drivePower < .2){
                                         drivePower = .2;
+                                    }
+                                    if(drivePower > maxDrivePower){
+                                        drivePower = maxDrivePower;
                                     }
                                 }
                                 //setPower(drivePower, drivePower, drivePower, drivePower);
