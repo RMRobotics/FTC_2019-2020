@@ -148,7 +148,11 @@ public class SkyStoneAlignTest extends AutoSuper {
                                         drivePower = .2;
                                     }
                                 }
-                                setPower(drivePower, drivePower, drivePower, drivePower);
+                                //setPower(drivePower, drivePower, drivePower, drivePower);
+                                telemetry.addData("drivePower", drivePower);
+                            }
+                            else{
+                                telemetry.addData("Stone not detected", "RIP");
                             }
                         }
 
