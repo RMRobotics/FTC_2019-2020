@@ -11,9 +11,9 @@ import org.firstinspires.ftc.teamcode.RevIMU;
 public class AutoDrivetrain extends Drivetrain {
 
     //constants
-    public final double MAX_JERK = 0;                //power / second^2
-    public final double MAX_ACCELERATION = 0;        //power / second
-    public final double MAX_VELOCITY = 0;
+    public final double MAX_JERK = 0.005;                //power / second^2
+    public final double MAX_ACCELERATION = 0.005;        //power / second
+    public final double MAX_VELOCITY = 1;
     public final double INCHES_PER_SECOND = 34;
     //power
     protected RevIMU imu;
@@ -298,6 +298,60 @@ public class AutoDrivetrain extends Drivetrain {
 
 
 
+
+    }
+
+
+    public void encoderDrive(double speed, double leftInches, double rightInches, double timeout) {
+
+        int flTgt;
+        int frTgt;
+        int blTgt;
+        int brTgt;
+
+
+        // check that the opmode is still active
+        if (isOpModeActive()) {
+
+            // Determines next target position, and sends to motor controller
+            flTgt = FL.getCurrentPosition() + (int) (leftInches * CPI);
+            frTgt = FR.getCurrentPosition() + (int) (rightInches * CPI);
+            blTgt = FL.getCurrentPosition() + (int) (leftInches * CPI);
+            brTgt = FL.getCurrentPosition() + (int) (rightInches * CPI);
+
+            FL.setTargetPosition(flTgt);
+            FR.setTargetPosition(frTgt);
+            BL.setTargetPosition(blTgt);
+            BR.setTargetPosition(brTgt);
+
+            // Turn On RUN_TO_POSITION
+            FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            timer.reset();
+            FL.setPower(speed);
+            FR.setPower(speed);
+            BL.setPower(speed);
+            BR.setPower(speed);
+
+            while (isOpModeActive() && (timer.seconds() < timeout) && (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
+
+                telemetry.addData("Path1",  "Running to %7d :%7d :%7d :%7d", flTgt,  frTgt, blTgt, brTgt);
+                telemetry.addData("Path2",  "Running at %7d :%7d :%7d :%7d",
+                        FL.getCurrentPosition(),
+                        FR.getCurrentPosition(),
+                        BL.getCurrentPosition(),
+                        BR.getCurrentPosition());
+                telemetry.update();
+            }
+
+            FL.setPower(0);
+            FR.setPower(0);
+            BL.setPower(0);
+            BR.setPower(0);
+        }
 
     }
 

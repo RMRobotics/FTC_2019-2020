@@ -13,7 +13,13 @@ public abstract class Drivetrain {
     protected final float MM_PER_INCH = 25.4f;
     protected final float ROBOT_SIZE = 18 * MM_PER_INCH;
     protected final float FTC_FIELD_SIZE_MM = (12 * 12 - 2) * MM_PER_INCH;
-    protected final double CPI = 86.93063762;
+
+
+
+    static final double COUNTS_PER_MOTOR_REV = 537.6;    // NeveRest Orbital 20 Motor Encoder
+    static final double DRIVE_GEAR_REDUCTION = 1.143;     // debateable
+    static final double WHEEL_DIAMETER_INCHES = 3.93701;     // for circumference
+    static final double CPI = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     protected Telemetry telemetry;
 
     //Motors
