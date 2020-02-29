@@ -311,6 +311,7 @@ public class MineralDetector extends Detector {
     @Override
     public boolean isCentered() {
         Log.d(TAG, "Position: " + getRelativePos());
+        Log.d(TAG, "Visible: " + isVisible());
         return (getRelPosition(mFrame,buffer) == RelativePosition.CENTER);
 
     }

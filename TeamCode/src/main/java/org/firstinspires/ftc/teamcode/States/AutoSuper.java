@@ -7,6 +7,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.DanCV.Detection.MineralDetector;
 import org.firstinspires.ftc.teamcode.DanCV.Enums.RelativePosition;
 import org.firstinspires.ftc.teamcode.DanCV.UI.CVViewActivity;
+import org.firstinspires.ftc.teamcode.Direction;
+import org.firstinspires.ftc.teamcode.DriveDirection;
 import org.firstinspires.ftc.teamcode.OOP.drivetrain.AutoDrivetrain;
 import org.firstinspires.ftc.teamcode.OOP.robot.AutoSettings;
 
@@ -39,8 +41,8 @@ public abstract class AutoSuper extends LinearOpMode {
         drivetrain = new AutoDrivetrain(hardwareMap);
         //drivetrain.
         //This is the object detector from DanCV. It detects objects based on color.
-        detector = new MineralDetector();
-        detector.init(hardwareMap.appContext, CVViewActivity.getInstance(),1);
+//        detector = new MineralDetector();
+        //detector.init(hardwareMap.appContext, CVViewActivity.getInstance(),1);
         //Always save activation(Turning the camera on and starting the detection) for the beginning of the opmode
         //detector.activate();
 
@@ -116,6 +118,10 @@ public abstract class AutoSuper extends LinearOpMode {
         drivetrain.turnDegrees(degreesToTurn,speed);
     }
 
+
+    public void acceleratedMove(double inches, DriveDirection dir){
+        drivetrain.acceleratedMoveStraight(inches,dir);
+    }
 
 
     public void detectBlock(){
