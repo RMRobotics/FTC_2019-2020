@@ -19,7 +19,7 @@ import org.opencv.core.Mat;
 public abstract class Detector implements CameraBridgeViewBase.CvCameraViewListener2 {
     static {
         try {
-            System.loadLibrary("opencv_java3");
+            System.loadLibrary("opencv_java4");
         } catch (UnsatisfiedLinkError e) {
             OpenCVLoader.loadOpenCV();
         }

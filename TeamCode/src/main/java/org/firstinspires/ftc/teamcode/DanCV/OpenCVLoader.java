@@ -21,9 +21,9 @@ public class OpenCVLoader {
     }
     public static void loadOpenCV() {
 
-        File protectedStorageLib = new File(filesDir + "/extra/libopencv_java3.so");
+        File protectedStorageLib = new File(filesDir + "/extra/libopencv_java4.so");
         File protectedExtraFolder = new File(filesDir + "/extra/");
-        File internalStorageLib = new File(Environment.getExternalStorageDirectory() + "/DanCV/libopencv_java3.so"); //Changed from EnderCV
+        File internalStorageLib = new File(Environment.getExternalStorageDirectory() + "/DanCV/libopencv_java4.so"); //Changed from EnderCV
         if (!protectedStorageLib.exists() && internalStorageLib.exists()) {
             if (!protectedExtraFolder.exists())
                 protectedExtraFolder.mkdir();
