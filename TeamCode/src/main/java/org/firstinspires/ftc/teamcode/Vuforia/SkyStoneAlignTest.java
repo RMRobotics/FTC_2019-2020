@@ -59,7 +59,7 @@ public class SkyStoneAlignTest extends AutoSuper {
         double maxDrivePower = 1;
 
         VuforiaLocalizer.Parameters params = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
-        params.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT; //uses the back phone camera
+        params.cameraDirection = VuforiaLocalizer.CameraDirection.BACK; //uses the back phone camera
         params.vuforiaLicenseKey = "AW2QuFH/////AAABmWaIPHGonUtBiAByunLrGxcyyeTFYpDBVTYsP/A5yrSSQ7PX+/+pCet8bFzd5AWw983mUAycCFdAz/tNDXFvp5BJeqH2b5ZGPFwi08UznmQ9zrq+k3GiKBUSJj37HaPMGeOuE04icbwblA5FgZEThDkSAUyiUqL+tMPv/zkXNzpVWKJkjObucLS2gdYNljJm4calEVnr9JOLbmbcP0IU3hy53CJtkxFc65LSF7n+CcajbEEB2PVfTCS3JLwCHcSKYkoR/FrHO06YFyESC0f5itieL2hKKleOwqOFwiqpV77u5WlMj4y3UncYn0uiCob7f3uXTR//dCCqPAp9P2y5cowPQ5/G6jKyWmv3B+qyegux";
         params.cameraMonitorFeedback = VuforiaLocalizer.Parameters.CameraMonitorFeedback.AXES; //show the xyz axis on the target (can be a teapot, building, axis, or none)
 
@@ -68,7 +68,7 @@ public class SkyStoneAlignTest extends AutoSuper {
 
         //set location for the phone
         OpenGLMatrix phoneOnRobot = OpenGLMatrix
-                .translation(70, robotSize / 2, 0)
+                .translation(+70, robotSize / 2, 0)
                 .multiplied(Orientation.getRotationMatrix(
                         AxesReference.EXTRINSIC, AxesOrder.XYZ,
                         AngleUnit.DEGREES, 0, -90, 0));
@@ -124,7 +124,15 @@ public class SkyStoneAlignTest extends AutoSuper {
 
                             tY = VuforiaUtil.round(location.get(0) / mmPerInch, 2);
                             tX = VuforiaUtil.round(location.get(1) / mmPerInch, 2);
-                            rZ = VuforiaUtil.round(VuforiaUtil.to180(-1 * rot.secondAngle + 180), 2);
+                            tX += 15;
+                            rZ = VuforiaUtil.round(VuforiaUtil.to180(-1 * rot.secondAngle), 2);
+
+//                            if(rZ < -150){
+//                                rZ = VuforiaUtil.round(rZ + 180, 2);
+//                            }
+//                            else if(rZ > 150){
+//                                rZ = VuforiaUtil.round(rZ - 180, 2);
+//                            }
 
                             //find the rotational x and y components of the robot relative to the target, finds the z rotation of the robot relative to the field
                             if(i.getName().equals("Stone Target")){
