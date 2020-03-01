@@ -58,6 +58,8 @@ public class SkyStoneAlignTest extends AutoSuper {
         double drivePower = 0;
         double maxDrivePower = 1;
 
+        boolean aligned = false;
+
         VuforiaLocalizer.Parameters params = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
         params.cameraDirection = VuforiaLocalizer.CameraDirection.BACK; //uses the back phone camera
         params.vuforiaLicenseKey = "AW2QuFH/////AAABmWaIPHGonUtBiAByunLrGxcyyeTFYpDBVTYsP/A5yrSSQ7PX+/+pCet8bFzd5AWw983mUAycCFdAz/tNDXFvp5BJeqH2b5ZGPFwi08UznmQ9zrq+k3GiKBUSJj37HaPMGeOuE04icbwblA5FgZEThDkSAUyiUqL+tMPv/zkXNzpVWKJkjObucLS2gdYNljJm4calEVnr9JOLbmbcP0IU3hy53CJtkxFc65LSF7n+CcajbEEB2PVfTCS3JLwCHcSKYkoR/FrHO06YFyESC0f5itieL2hKKleOwqOFwiqpV77u5WlMj4y3UncYn0uiCob7f3uXTR//dCCqPAp9P2y5cowPQ5/G6jKyWmv3B+qyegux";
@@ -103,77 +105,88 @@ public class SkyStoneAlignTest extends AutoSuper {
 
             while (!isStopRequested()) {
 
-                for (VuforiaTrackable i : images) {
-                    OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) (i.getListener())).getPose();
+                while(!aligned){
 
-                    if (pose != null) { //if the image is found
+                    for (VuforiaTrackable i : images) {
+                        OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) (i.getListener())).getPose();
 
-                        //finds data about the image
-                        VectorF translation = pose.getTranslation();
-                        Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+                        if (pose != null) { //if the image is found
 
-                        OpenGLMatrix robotLocationOnField = ((VuforiaTrackableDefaultListener) (i).getListener()).getUpdatedRobotLocation();
-                        lastLocation = robotLocationOnField;
+                            //finds data about the image
+                            VectorF translation = pose.getTranslation();
+                            Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
 
-                        if (lastLocation != null) {
-                            telemetry.addData(i.getName(), " is visible");
-//                        telemetry.addData("Pos ", format(lastLocation));
+                            OpenGLMatrix robotLocationOnField = ((VuforiaTrackableDefaultListener) (i).getListener()).getUpdatedRobotLocation();
+                            lastLocation = robotLocationOnField;
 
-                            VectorF location = lastLocation.getTranslation();
-                            Orientation locationRot = Orientation.getOrientation(lastLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+                            if (lastLocation != null) {
+                                telemetry.addData(i.getName(), " is visible");
+                                //                        telemetry.addData("Pos ", format(lastLocation));
 
-                            tY = VuforiaUtil.round(location.get(0) / mmPerInch, 2);
-                            tX = VuforiaUtil.round(location.get(1) / mmPerInch, 2);
-                            tX += 15;
-                            rZ = VuforiaUtil.round(VuforiaUtil.to180(-1 * rot.secondAngle), 2);
+                                VectorF location = lastLocation.getTranslation();
+                                Orientation locationRot = Orientation.getOrientation(lastLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
 
-//                            if(rZ < -150){
-//                                rZ = VuforiaUtil.round(rZ + 180, 2);
-//                            }
-//                            else if(rZ > 150){
-//                                rZ = VuforiaUtil.round(rZ - 180, 2);
-//                            }
+                                tY = VuforiaUtil.round(location.get(0) / mmPerInch, 2);
+                                tX = VuforiaUtil.round(location.get(1) / mmPerInch, 2);
+                                tX += 8;          //OFFSET FOR THE CENTER, CHANGE THIS VALUE FOR ARM
+                                rZ = VuforiaUtil.round(VuforiaUtil.to180(-1 * rot.secondAngle), 2);
 
-                            //find the rotational x and y components of the robot relative to the target, finds the z rotation of the robot relative to the field
-                            if(i.getName().equals("Stone Target")){
+                                //                            if(rZ < -150){
+                                //                                rZ = VuforiaUtil.round(rZ + 180, 2);
+                                //                            }
+                                //                            else if(rZ > 150){
+                                //                                rZ = VuforiaUtil.round(rZ - 180, 2);
+                                //                            }
 
-                                telemetry.addData("\nImage: ", i.getName());
-                                telemetry.addData("\n(Translation to Target) X: " + tX + ", Y: " + tY + ", Z: " + tZ, "");
-                                telemetry.addData("\nZ-Rotation: ", rZ);
+                                //find the rotational x and y components of the robot relative to the target, finds the z rotation of the robot relative to the field
+                                if (i.getName().equals("Stone Target")) {
 
-                                if(tX > .25){
-                                    drivePower = -maxDrivePower + (1/(.5 * tX));
-                                    if(drivePower > -.2){
-                                        drivePower = -.2;
+                                    telemetry.addData("\nImage: ", i.getName());
+                                    telemetry.addData("\n(Translation to Target) X: " + tX + ", Y: " + tY + ", Z: " + tZ, "");
+                                    telemetry.addData("\nZ-Rotation: ", rZ);
+
+
+                                    if (rZ >= 10) {
+                                        //setPower(.2, -.2, .2, -.2);           //UNCOMMENT FOR ACTUAL TEST
+                                    } else if (rZ <= -10) {
+                                        //setPower(-.2, .2, -.2, .2);           //UNCOMMENT FOR ACTUAL TEST
+                                    } else {
+                                        if (tX > .75) {
+                                            drivePower = -.2;
+                                            //                                        drivePower = -maxDrivePower + (1/(.5 * tX));
+                                            //                                        if(drivePower > -.2){
+                                            //                                            drivePower = -.2;
+                                            //                                        }
+                                            //                                        if(drivePower < -maxDrivePower){
+                                            //                                            drivePower = -maxDrivePower;
+                                            //                                        }
+                                        } else if (-.75 <= tX && tX <= .75) {
+                                            drivePower = 0;
+                                            aligned = true;
+                                        } else {
+                                            //                                        drivePower = maxDrivePower - (1/(.5* tX));
+                                            //                                        if(drivePower < .2){
+                                            //                                            drivePower = .2;
+                                            //                                        }
+                                            //                                        if(drivePower > maxDrivePower){
+                                            //                                            drivePower = maxDrivePower;
+                                            //                                        }
+                                            drivePower = .2;
+                                        }
+                                        //setPower(drivePower, drivePower, drivePower, drivePower);     //UNCCOMENT FOR ACTUAL TEST
+                                        telemetry.addData("drivePower", drivePower);
                                     }
-                                    if(drivePower < -maxDrivePower){
-                                        drivePower = -maxDrivePower;
-                                    }
+                                } else {
+                                    setPower(0, 0, 0, 0);
+                                    telemetry.addData("Stone not detected", "RIP");
                                 }
-                                else if (-.25 <= tX && tX <= .25){
-                                    drivePower = 0;
-                                }
-                                else{
-                                    drivePower = maxDrivePower - (1/(.5* tX));
-                                    if(drivePower < .2){
-                                        drivePower = .2;
-                                    }
-                                    if(drivePower > maxDrivePower){
-                                        drivePower = maxDrivePower;
-                                    }
-                                }
-                                //setPower(drivePower, drivePower, drivePower, drivePower);
-                                telemetry.addData("drivePower", drivePower);
                             }
-                            else{
-                                telemetry.addData("Stone not detected", "RIP");
-                            }
+
                         }
 
                     }
-
+                    telemetry.update();
                 }
-                telemetry.update();
             }
             images.deactivate();
         }
